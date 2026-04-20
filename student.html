@@ -6,11 +6,7 @@
     <title>سنتر - بروفايل الطالب</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f2f5;
-            min-height: 100vh;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; }
         .header {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
@@ -59,13 +55,7 @@
             margin-bottom: 15px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
-        .info-card h3 {
-            color: #667eea;
-            font-size: 16px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f2f5;
-        }
+        .info-card h3 { color: #667eea; font-size: 16px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f0f2f5; }
         .info-row {
             display: flex;
             justify-content: space-between;
@@ -86,6 +76,27 @@
         .badge.paid { background: #e8f5e9; color: #2e7d32; }
         .badge.unpaid { background: #ffebee; color: #c62828; }
         .badge.approved { background: #e8f5e9; color: #2e7d32; }
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .action-btn {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            transition: transform 0.2s;
+        }
+        .action-btn:hover { transform: translateY(-2px); }
+        .action-btn .icon { font-size: 32px; margin-bottom: 8px; }
+        .action-btn .title { color: #333; font-size: 14px; font-weight: 700; }
+        .action-btn .sub { color: #888; font-size: 12px; margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -100,6 +111,29 @@
             <h2 id="studentName">جاري التحميل...</h2>
             <p id="studentPhone"></p>
             <span class="badge approved">✅ طالب مقبول</span>
+        </div>
+
+        <div class="actions-grid">
+            <a class="action-btn" href="scan.html">
+                <div class="icon">📱</div>
+                <div class="title">تسجيل الحضور</div>
+                <div class="sub">امسح QR الحصة</div>
+            </a>
+            <a class="action-btn" href="take-exam.html">
+                <div class="icon">📝</div>
+                <div class="title">الاختبارات</div>
+                <div class="sub">حل الاختبارات</div>
+            </a>
+            <a class="action-btn" href="receipt.html">
+                <div class="icon">💰</div>
+                <div class="title">رفع إيصال</div>
+                <div class="sub">إيصال الدفع</div>
+            </a>
+            <a class="action-btn" href="#" onclick="showInfo()">
+                <div class="icon">📊</div>
+                <div class="title">تقاريري</div>
+                <div class="sub">حضور وتقييم</div>
+            </a>
         </div>
 
         <div class="info-card">
@@ -122,7 +156,7 @@
             <h3>💰 حالة الدفع</h3>
             <div class="info-row">
                 <span class="label">شهر أبريل</span>
-                <span class="value"><span class="badge unpaid">لم يدفع</span></span>
+                <span class="value" id="paymentStatus"><span class="badge unpaid">لم يدفع</span></span>
             </div>
         </div>
 
@@ -141,24 +175,82 @@
                 <span class="value" id="absent">0</span>
             </div>
         </div>
+
+        <div class="info-card">
+            <h3>📝 الاختبارات</h3>
+            <div id="examResults"><div style="text-align:center;color:#888;padding:10px">جاري التحميل...</div></div>
+        </div>
     </div>
 
-    <script>
-        const student = JSON.parse(localStorage.getItem('student'));
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-        if (!student) {
-            window.location.href = 'login.html';
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
+            authDomain: "center-app-30dc9.firebaseapp.com",
+            projectId: "center-app-30dc9",
+            storageBucket: "center-app-30dc9.firebasestorage.app",
+            messagingSenderId: "407314952817",
+            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const student = JSON.parse(localStorage.getItem('student'));
+        if (!student) window.location.href = 'login.html';
+
+        document.getElementById('studentName').textContent = student.name;
+        document.getElementById('studentPhone').textContent = student.phone;
+        document.getElementById('infoName').textContent = student.name;
+        document.getElementById('infoPhone').textContent = student.phone;
+        document.getElementById('infoParent').textContent = student.parentPhone;
+
+        // حالة الدفع
+        const month = new Date().toLocaleDateString('ar-EG', { month: 'long', year: 'numeric' });
+        const receipts = await getDocs(query(collection(db, 'receipts'), where('studentId', '==', student.id)));
+        receipts.forEach(d => {
+            const r = d.data();
+            if (r.month === month) {
+                const status = r.status === 'confirmed' ? 
+                    '<span class="badge paid">✅ دفع</span>' : 
+                    '<span class="badge unpaid">⏳ في الانتظار</span>';
+                document.getElementById('paymentStatus').innerHTML = status;
+            }
+        });
+
+        // الحضور
+        const attendance = await getDocs(query(collection(db, 'attendance'), where('studentId', '==', student.id)));
+        const sessions = await getDocs(collection(db, 'sessions'));
+        document.getElementById('totalLessons').textContent = sessions.size;
+        document.getElementById('attended').textContent = attendance.size;
+        document.getElementById('absent').textContent = Math.max(0, sessions.size - attendance.size);
+
+        // الاختبارات
+        const examResults = await getDocs(query(collection(db, 'examResults'), where('studentId', '==', student.id)));
+        const examDiv = document.getElementById('examResults');
+        if (examResults.empty) {
+            examDiv.innerHTML = '<div style="text-align:center;color:#888;padding:10px">مفيش اختبارات لحد دلوقتي</div>';
         } else {
-            document.getElementById('studentName').textContent = student.name;
-            document.getElementById('studentPhone').textContent = student.phone;
-            document.getElementById('infoName').textContent = student.name;
-            document.getElementById('infoPhone').textContent = student.phone;
-            document.getElementById('infoParent').textContent = student.parentPhone;
+            examDiv.innerHTML = '';
+            examResults.forEach(d => {
+                const r = d.data();
+                examDiv.innerHTML += `
+                    <div class="info-row">
+                        <span class="value">${r.score}/${r.totalMarks}</span>
+                        <span class="label">${r.examTitle}</span>
+                    </div>`;
+            });
         }
 
-        function logout() {
+        window.logout = function() {
             localStorage.removeItem('student');
             window.location.href = 'login.html';
+        }
+
+        window.showInfo = function() {
+            alert('قريباً! 📊');
         }
     </script>
 </body>
