@@ -4,113 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سنتر - بروفايل الطالب</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; }
-        .header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header h1 { font-size: 20px; }
-        .logout {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 13px;
-        }
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
         .welcome-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             text-align: center;
+            padding: 30px 20px;
         }
-        .avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 35px;
-            margin: 0 auto 15px;
+        .student-name {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 10px 0 5px;
         }
-        .welcome-card h2 { color: #333; font-size: 20px; margin-bottom: 5px; }
-        .welcome-card p { color: #888; font-size: 14px; }
-        .info-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-        .info-card h3 { color: #667eea; font-size: 16px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #f0f2f5; }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #f5f5f5;
+        .student-phone {
+            color: rgba(255,255,255,0.5);
             font-size: 14px;
         }
-        .info-row:last-child { border-bottom: none; }
-        .info-row .label { color: #888; }
-        .info-row .value { color: #333; font-weight: 600; }
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .badge.paid { background: #e8f5e9; color: #2e7d32; }
-        .badge.unpaid { background: #ffebee; color: #c62828; }
-        .badge.approved { background: #e8f5e9; color: #2e7d32; }
-        .actions-grid {
+        .score-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
         }
-        .action-btn {
-            background: white;
-            border-radius: 15px;
-            padding: 20px 15px;
+        .score-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 8px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-            transition: transform 0.2s;
         }
-        .action-btn:hover { transform: translateY(-2px); }
-        .action-btn .icon { font-size: 32px; margin-bottom: 8px; }
-        .action-btn .title { color: #333; font-size: 14px; font-weight: 700; }
-        .action-btn .sub { color: #888; font-size: 12px; margin-top: 3px; }
+        .score-num {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6c63ff, #11998e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .score-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 3px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>📚 سنتر</h1>
-        <button class="logout" onclick="logout()">خروج</button>
+        <button class="header-btn" onclick="logout()">خروج</button>
     </div>
 
     <div class="container">
-        <div class="welcome-card">
+        <div class="card welcome-card">
             <div class="avatar">👤</div>
-            <h2 id="studentName">جاري التحميل...</h2>
-            <p id="studentPhone"></p>
-            <span class="badge approved">✅ طالب مقبول</span>
+            <div class="student-name" id="studentName">جاري التحميل...</div>
+            <div class="student-phone" id="studentPhone"></div>
+            <span class="badge badge-success" style="margin-top:10px;display:inline-block">✅ طالب مقبول</span>
+            <div class="score-grid">
+                <div class="score-item">
+                    <div class="score-num" id="totalLessons">0</div>
+                    <div class="score-label">الحصص</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-num" id="attended">0</div>
+                    <div class="score-label">حضر</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-num" id="absent">0</div>
+                    <div class="score-label">غاب</div>
+                </div>
+            </div>
         </div>
 
         <div class="actions-grid">
@@ -129,15 +90,15 @@
                 <div class="title">رفع إيصال</div>
                 <div class="sub">إيصال الدفع</div>
             </a>
-            <a class="action-btn" href="#" onclick="showInfo()">
+            <a class="action-btn" href="#">
                 <div class="icon">📊</div>
                 <div class="title">تقاريري</div>
-                <div class="sub">حضور وتقييم</div>
+                <div class="sub">قريباً</div>
             </a>
         </div>
 
-        <div class="info-card">
-            <h3>📋 بياناتي</h3>
+        <div class="card">
+            <div class="card-title">📋 بياناتي</div>
             <div class="info-row">
                 <span class="label">الاسم</span>
                 <span class="value" id="infoName">-</span>
@@ -152,33 +113,17 @@
             </div>
         </div>
 
-        <div class="info-card">
-            <h3>💰 حالة الدفع</h3>
+        <div class="card">
+            <div class="card-title">💰 حالة الدفع</div>
             <div class="info-row">
                 <span class="label">شهر أبريل</span>
-                <span class="value" id="paymentStatus"><span class="badge unpaid">لم يدفع</span></span>
+                <span class="value" id="paymentStatus"><span class="badge badge-danger">لم يدفع</span></span>
             </div>
         </div>
 
-        <div class="info-card">
-            <h3>📅 الحضور والغياب</h3>
-            <div class="info-row">
-                <span class="label">الحصص الكلية</span>
-                <span class="value" id="totalLessons">0</span>
-            </div>
-            <div class="info-row">
-                <span class="label">حضر</span>
-                <span class="value" id="attended">0</span>
-            </div>
-            <div class="info-row">
-                <span class="label">غاب</span>
-                <span class="value" id="absent">0</span>
-            </div>
-        </div>
-
-        <div class="info-card">
-            <h3>📝 الاختبارات</h3>
-            <div id="examResults"><div style="text-align:center;color:#888;padding:10px">جاري التحميل...</div></div>
+        <div class="card">
+            <div class="card-title">📝 الاختبارات</div>
+            <div id="examResults"><div class="empty">مفيش اختبارات لحد دلوقتي</div></div>
         </div>
     </div>
 
@@ -207,38 +152,33 @@
         document.getElementById('infoPhone').textContent = student.phone;
         document.getElementById('infoParent').textContent = student.parentPhone;
 
-        // حالة الدفع
         const month = new Date().toLocaleDateString('ar-EG', { month: 'long', year: 'numeric' });
         const receipts = await getDocs(query(collection(db, 'receipts'), where('studentId', '==', student.id)));
         receipts.forEach(d => {
             const r = d.data();
             if (r.month === month) {
-                const status = r.status === 'confirmed' ? 
-                    '<span class="badge paid">✅ دفع</span>' : 
-                    '<span class="badge unpaid">⏳ في الانتظار</span>';
+                const status = r.status === 'confirmed' ?
+                    '<span class="badge badge-success">✅ دفع</span>' :
+                    '<span class="badge badge-warning">⏳ في الانتظار</span>';
                 document.getElementById('paymentStatus').innerHTML = status;
             }
         });
 
-        // الحضور
         const attendance = await getDocs(query(collection(db, 'attendance'), where('studentId', '==', student.id)));
         const sessions = await getDocs(collection(db, 'sessions'));
         document.getElementById('totalLessons').textContent = sessions.size;
         document.getElementById('attended').textContent = attendance.size;
         document.getElementById('absent').textContent = Math.max(0, sessions.size - attendance.size);
 
-        // الاختبارات
         const examResults = await getDocs(query(collection(db, 'examResults'), where('studentId', '==', student.id)));
         const examDiv = document.getElementById('examResults');
-        if (examResults.empty) {
-            examDiv.innerHTML = '<div style="text-align:center;color:#888;padding:10px">مفيش اختبارات لحد دلوقتي</div>';
-        } else {
+        if (!examResults.empty) {
             examDiv.innerHTML = '';
             examResults.forEach(d => {
                 const r = d.data();
                 examDiv.innerHTML += `
                     <div class="info-row">
-                        <span class="value">${r.score}/${r.totalMarks}</span>
+                        <span class="badge badge-primary">${r.score}/${r.totalMarks}</span>
                         <span class="label">${r.examTitle}</span>
                     </div>`;
             });
@@ -247,10 +187,6 @@
         window.logout = function() {
             localStorage.removeItem('student');
             window.location.href = 'login.html';
-        }
-
-        window.showInfo = function() {
-            alert('قريباً! 📊');
         }
     </script>
 </body>
