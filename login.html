@@ -4,83 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سنتر - تسجيل دخول</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            min-height: 100vh;
             padding: 20px;
+            background: radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f1a 70%);
         }
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
+        .login-box {
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
         }
-        .logo { text-align: center; margin-bottom: 30px; }
-        .logo h1 { color: #667eea; font-size: 28px; font-weight: 800; }
-        .logo p { color: #888; font-size: 14px; margin-top: 5px; }
-        .form-group { margin-bottom: 18px; }
-        label { display: block; color: #444; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-        input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            font-size: 15px;
-            font-family: inherit;
-            transition: border-color 0.3s;
-            text-align: right;
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
         }
-        input:focus { outline: none; border-color: #667eea; }
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
+        .logo-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .logo h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6c63ff, #11998e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo p { color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 5px; }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+        .register-link a {
+            color: #6c63ff;
+            text-decoration: none;
             font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            font-family: inherit;
         }
-        .btn:hover { opacity: 0.9; }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .register-link { text-align: center; margin-top: 20px; color: #888; font-size: 14px; }
-        .register-link a { color: #667eea; text-decoration: none; font-weight: 600; }
-        .msg { text-align: center; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 14px; }
-        .msg.success { background: #e8f5e9; color: #2e7d32; }
-        .msg.error { background: #ffebee; color: #c62828; }
-        .msg.warning { background: #fff8e1; color: #f57f17; }
+        label { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 5px; display: block; font-weight: 600; }
     </style>
 </head>
 <body>
-    <div class="card">
+    <div class="login-box">
         <div class="logo">
-            <h1>📚 سنتر</h1>
-            <p>سجل دخولك</p>
+            <span class="logo-icon">📚</span>
+            <h1>سنتر</h1>
+            <p>سجل دخولك للمتابعة</p>
         </div>
 
-        <div class="form-group">
-            <label>رقم الموبايل</label>
-            <input type="tel" id="phone" placeholder="01xxxxxxxxx">
+        <div class="card">
+            <div class="form-group">
+                <label>رقم الموبايل</label>
+                <input type="tel" id="phone" placeholder="01xxxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="password" placeholder="كلمة المرور">
+            </div>
+            <button class="btn" id="loginBtn" onclick="login()">دخول 🚀</button>
+            <div id="msg"></div>
         </div>
-
-        <div class="form-group">
-            <label>كلمة المرور</label>
-            <input type="password" id="password" placeholder="كلمة المرور">
-        </div>
-
-        <button class="btn" id="loginBtn" onclick="login()">دخول</button>
-        <div id="msg"></div>
 
         <div class="register-link">
             مش مسجل؟ <a href="index.html">سجل دلوقتي</a>
@@ -110,7 +103,7 @@
             const msg = document.getElementById('msg');
 
             if (!phone || !password) {
-                msg.className = 'msg error';
+                msg.className = 'msg msg-error';
                 msg.textContent = 'من فضلك ادخل الرقم وكلمة المرور';
                 return;
             }
@@ -119,48 +112,39 @@
             btn.textContent = 'جاري الدخول...';
 
             try {
-                const q = query(
-                    collection(db, 'students'),
-                    where('phone', '==', phone),
-                    where('password', '==', password)
-                );
+                const q = query(collection(db, 'students'), where('phone', '==', phone), where('password', '==', password));
                 const result = await getDocs(q);
 
                 if (result.empty) {
-                    msg.className = 'msg error';
-                    msg.textContent = 'رقم الموبايل أو كلمة المرور غلط';
+                    msg.className = 'msg msg-error';
+                    msg.textContent = '❌ رقم الموبايل أو كلمة المرور غلط';
                     btn.disabled = false;
-                    btn.textContent = 'دخول';
+                    btn.textContent = 'دخول 🚀';
                     return;
                 }
 
                 const student = result.docs[0].data();
 
                 if (student.status === 'pending') {
-                    msg.className = 'msg warning';
-                    msg.textContent = '⏳ حسابك لسه في انتظار موافقة المدرس';
+                    msg.className = 'msg msg-warning';
+                    msg.textContent = '⏳ حسابك في انتظار موافقة المدرس';
                     btn.disabled = false;
-                    btn.textContent = 'دخول';
+                    btn.textContent = 'دخول 🚀';
                     return;
                 }
 
                 if (student.status === 'approved') {
-                    msg.className = 'msg success';
+                    localStorage.setItem('student', JSON.stringify({ id: result.docs[0].id, ...student }));
+                    msg.className = 'msg msg-success';
                     msg.textContent = '✅ أهلاً ' + student.name + '!';
-                    localStorage.setItem('student', JSON.stringify({
-                        id: result.docs[0].id,
-                        ...student
-                    }));
-                    setTimeout(() => {
-                        window.location.href = 'student.html';
-                    }, 1000);
+                    setTimeout(() => window.location.href = 'student.html', 1000);
                 }
 
             } catch (error) {
-                msg.className = 'msg error';
+                msg.className = 'msg msg-error';
                 msg.textContent = 'حصل خطأ، حاول تاني';
                 btn.disabled = false;
-                btn.textContent = 'دخول';
+                btn.textContent = 'دخول 🚀';
             }
         }
     </script>
