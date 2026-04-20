@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سنتر - الاختبارات</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 20px; }
+        .back {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        .container { padding: 20px; max-width: 700px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .exam-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .exam-item:last-child { border-bottom: none; }
+        .exam-title { color: #333; font-size: 15px; font-weight: 600; }
+        .exam-date { color: #888; font-size: 12px; margin-top: 3px; }
+        .btn-start {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-done {
+            padding: 10px 20px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: inherit;
+        }
+        .question-card {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .question-text { color: #333; font-size: 16px; font-weight: 600; margin-bottom: 15px; }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option:hover { border-color: #667eea; background: #f8f9ff; }
+        .option.selected { border-color: #667eea; background: #f0f4ff; }
+        .option.correct { border-color: #2e7d32; background: #e8f5e9; }
+        .option.wrong { border-color: #c62828; background: #ffebee; }
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        .option-text { color: #333; font-size: 14px; }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+        .result-card {
+            text-align: center;
+            padding: 30px;
+        }
+        .result-score {
+            font-size: 48px;
+            font-weight: 800;
+            color: #667eea;
+            margin: 15px 0;
+        }
+        .result-msg { color: #555; font-size: 16px; }
+        .empty { text-align: center; color: #888; padding: 30px; }
+        #examView { display: none; }
+        #resultView { display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 الاختبارات</h1>
+        <button class="back" onclick="goBack()">رجوع</button>
+    </div>
+
+    <div class="container">
+        <!-- قائمة الاختبارات -->
+        <div id="listView">
+            <div class="card">
+                <h2 style="color:#667eea;margin-bottom:20px">📋 الاختبارات المتاحة</h2>
+                <div id="examsList"></div>
+            </div>
+        </div>
+
+        <!-- صفحة الاختبار -->
+        <div id="examView">
+            <div class="card">
+                <h2 id="examTitleDisplay" style="color:#333;margin-bottom:5px"></h2>
+                <p id="examInfo" style="color:#888;font-size:13px;margin-bottom:20px"></p>
+                <div id="questionsDisplay"></div>
+                <button class="btn" onclick="submitExam()">تسليم الاختبار 📤</button>
+            </div>
+        </div>
+
+        <!-- نتيجة الاختبار -->
+        <div id="resultView">
+            <div class="card result-card">
+                <div style="font-size:48px">🎉</div>
+                <h2 style="color:#333;margin:10px 0">انتهى الاختبار!</h2>
+                <div class="result-score" id="resultScore"></div>
+                <p class="result-msg" id="resultMsg"></p>
+                <button class="btn" style="margin-top:20px" onclick="window.location.href='student.html'">رجوع للبروفايل</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, query, where } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
+            authDomain: "center-app-30dc9.firebaseapp.com",
+            projectId: "center-app-30dc9",
+            storageBucket: "center-app-30dc9.firebasestorage.app",
+            messagingSenderId: "407314952817",
+            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const student = JSON.parse(localStorage.getItem('student'));
+        if (!student) window.location.href = 'login.html';
+
+        let currentExam = null;
+        let answers = {};
+
+        window.goBack = function() {
+            const examView = document.getElementById('examView');
+            const listView = document.getElementById('listView');
+            const resultView = document.getElementById('resultView');
+
+            if (examView.style.display === 'block') {
+                examView.style.display = 'none';
+                listView.style.display = 'block';
+            } else {
+                window.location.href = 'student.html';
+            }
+        }
+
+        async function loadExams() {
+            const list = document.getElementById('examsList');
+            const snap = await getDocs(query(collection(db, 'exams'), where('status', '==', 'active')));
+
+            // جيب الاختبارات اللي حلها الطالب
+            const doneSnap = await getDocs(query(
+                collection(db, 'examResults'),
+                where('studentId', '==', student.id)
+            ));
+            const doneIds = doneSnap.docs.map(d => d.data().examId);
+
+            list.innerHTML = '';
+            let count = 0;
+
+            snap.forEach(d => {
+                count++;
+                const e = d.data();
+                const isDone = doneIds.includes(d.id);
+                const date = new Date(e.createdAt).toLocaleDateString('ar-EG');
+
+                list.innerHTML += `
+                    <div class="exam-item">
+                        <div>
+                            <div class="exam-title">${e.title}</div>
+                            <div class="exam-date">📅 ${date} | 📊 ${e.totalMarks} درجة</div>
+                        </div>
+                        ${isDone ?
+                            `<button class="btn-done">✅ تم</button>` :
+                            `<button class="btn-start" onclick="startExam('${d.id}')">ابدأ</button>`
+                        }
+                    </div>`;
+            });
+
+            if (count === 0) list.innerHTML = '<div class="empty">مفيش اختبارات متاحة دلوقتي</div>';
+        }
+
+        window.startExam = async function(examId) {
+            const snap = await getDocs(collection(db, 'exams'));
+            snap.forEach(d => {
+                if (d.id === examId) {
+                    currentExam = { id: d.id, ...d.data() };
+                }
+            });
+
+            if (!currentExam) return;
+            answers = {};
+
+            document.getElementById('listView').style.display = 'none';
+            document.getElementById('examView').style.display = 'block';
+            document.getElementById('examTitleDisplay').textContent = currentExam.title;
+            document.getElementById('examInfo').textContent = `عدد الأسئلة: ${currentExam.questions.length} | الدرجة الكاملة: ${currentExam.totalMarks}`;
+
+            const container = document.getElementById('questionsDisplay');
+            const letters = ['أ', 'ب', 'ج', 'د'];
+            container.innerHTML = '';
+
+            currentExam.questions.forEach((q, qi) => {
+                container.innerHTML += `
+                    <div class="question-card">
+                        <div class="question-text">${qi + 1}. ${q.qtext}</div>
+                        ${q.options.map((opt, oi) => `
+                            <div class="option" id="opt_${qi}_${oi}" onclick="selectOption(${qi}, ${oi})">
+                                <div class="option-letter">${letters[oi]}</div>
+                                <div class="option-text">${opt}</div>
+                            </div>
+                        `).join('')}
+                    </div>`;
+            });
+        }
+
+        window.selectOption = function(qi, oi) {
+            // ازل التحديد من كل اختيارات السؤال
+            currentExam.questions[qi].options.forEach((_, i) => {
+                const el = document.getElementById(`opt_${qi}_${i}`);
+                if (el) el.classList.remove('selected');
+            });
+
+            // حدد الاختيار
+            const el = document.getElementById(`opt_${qi}_${oi}`);
+            if (el) el.classList.add('selected');
+            answers[qi] = oi;
+        }
+
+        window.submitExam = async function() {
+            if (Object.keys(answers).length < currentExam.questions.length) {
+                alert('من فضلك أجب على كل الأسئلة!');
+                return;
+            }
+
+            let correct = 0;
+            currentExam.questions.forEach((q, qi) => {
+                if (answers[qi] === q.correct) correct++;
+            });
+
+            const score = Math.round((correct / currentExam.questions.length) * currentExam.totalMarks);
+
+            await addDoc(collection(db, 'examResults'), {
+                studentId: student.id,
+                studentName: student.name,
+                examId: currentExam.id,
+                examTitle: currentExam.title,
+                score,
+                totalMarks: currentExam.totalMarks,
+                correct,
+                total: currentExam.questions.length,
+                submittedAt: new Date().toISOString()
+            });
+
+            document.getElementById('examView').style.display = 'none';
+            document.getElementById('resultView').style.display = 'block';
+            document.getElementById('resultScore').textContent = `${score} / ${currentExam.totalMarks}`;
+
+            let msg = '';
+            const percent = (correct / currentExam.questions.length) * 100;
+            if (percent >= 80) msg = '🌟 ممتاز! أحسنت';
+            else if (percent >= 60) msg = '👍 جيد! استمر';
+            else msg = '📚 تحتاج مراجعة أكثر';
+
+            document.getElementById('resultMsg').textContent = msg;
+        }
+
+        loadExams();
+    </script>
+</body>
+</html>

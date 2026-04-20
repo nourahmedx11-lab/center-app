@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سنتر - بروفايل الطالب</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 20px; }
+        .logout {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .welcome-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin: 0 auto 15px;
+        }
+        .welcome-card h2 { color: #333; font-size: 20px; margin-bottom: 5px; }
+        .welcome-card p { color: #888; font-size: 14px; }
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .info-card h3 {
+            color: #667eea;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 14px;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-row .label { color: #888; }
+        .info-row .value { color: #333; font-weight: 600; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge.paid { background: #e8f5e9; color: #2e7d32; }
+        .badge.unpaid { background: #ffebee; color: #c62828; }
+        .badge.approved { background: #e8f5e9; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 سنتر</h1>
+        <button class="logout" onclick="logout()">خروج</button>
+    </div>
+
+    <div class="container">
+        <div class="welcome-card">
+            <div class="avatar">👤</div>
+            <h2 id="studentName">جاري التحميل...</h2>
+            <p id="studentPhone"></p>
+            <span class="badge approved">✅ طالب مقبول</span>
+        </div>
+
+        <div class="info-card">
+            <h3>📋 بياناتي</h3>
+            <div class="info-row">
+                <span class="label">الاسم</span>
+                <span class="value" id="infoName">-</span>
+            </div>
+            <div class="info-row">
+                <span class="label">رقم موبايلي</span>
+                <span class="value" id="infoPhone">-</span>
+            </div>
+            <div class="info-row">
+                <span class="label">رقم ولي الأمر</span>
+                <span class="value" id="infoParent">-</span>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h3>💰 حالة الدفع</h3>
+            <div class="info-row">
+                <span class="label">شهر أبريل</span>
+                <span class="value"><span class="badge unpaid">لم يدفع</span></span>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h3>📅 الحضور والغياب</h3>
+            <div class="info-row">
+                <span class="label">الحصص الكلية</span>
+                <span class="value" id="totalLessons">0</span>
+            </div>
+            <div class="info-row">
+                <span class="label">حضر</span>
+                <span class="value" id="attended">0</span>
+            </div>
+            <div class="info-row">
+                <span class="label">غاب</span>
+                <span class="value" id="absent">0</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const student = JSON.parse(localStorage.getItem('student'));
+
+        if (!student) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('studentName').textContent = student.name;
+            document.getElementById('studentPhone').textContent = student.phone;
+            document.getElementById('infoName').textContent = student.name;
+            document.getElementById('infoPhone').textContent = student.phone;
+            document.getElementById('infoParent').textContent = student.parentPhone;
+        }
+
+        function logout() {
+            localStorage.removeItem('student');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

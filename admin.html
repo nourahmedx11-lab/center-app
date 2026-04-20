@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سنتر - لوحة المدرس</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 22px; }
+        .nav {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 2px solid #eee;
+            overflow-x: auto;
+        }
+        .nav-btn {
+            padding: 8px 18px;
+            border: 2px solid #667eea;
+            border-radius: 20px;
+            background: white;
+            color: #667eea;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .nav-btn.active { background: #667eea; color: white; }
+        .container { padding: 20px; max-width: 900px; margin: 0 auto; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .student-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .student-info h3 { color: #333; font-size: 16px; margin-bottom: 5px; }
+        .student-info p { color: #888; font-size: 13px; }
+        .btn-approve {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-reject {
+            padding: 10px 20px;
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            margin-right: 10px;
+        }
+        .btn-confirm {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            margin-right: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .badge.pending { background: #fff8e1; color: #f57f17; }
+        .badge.approved { background: #e8f5e9; color: #2e7d32; }
+        .empty { text-align: center; color: #888; padding: 40px; font-size: 16px; }
+        .receipt-card img {
+            width: 100%;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px solid #eee;
+        }
+        .receipt-info p { color: #555; font-size: 14px; margin-bottom: 5px; }
+        .session-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 لوحة المدرس</h1>
+        <span>مرحباً بك</span>
+    </div>
+
+    <div class="nav">
+        <button class="nav-btn active" id="btn-students" onclick="showSection('students')">👥 الطلاب</button>
+        <button class="nav-btn" id="btn-receipts" onclick="showSection('receipts')">💰 الإيصالات</button>
+        <button class="nav-btn" id="btn-session" onclick="showSection('session')">📱 فتح حصة</button>
+    </div>
+
+    <div class="container">
+        <div class="section active" id="students">
+            <div class="section-title">⏳ الطلاب المنتظرون الموافقة</div>
+            <div id="pendingList"></div>
+            <div class="section-title" style="margin-top:30px">✅ الطلاب المقبولون</div>
+            <div id="approvedList"></div>
+        </div>
+
+        <div class="section" id="receipts">
+            <div class="section-title">💰 إيصالات الدفع</div>
+            <div id="receiptsList"></div>
+        </div>
+
+        <div class="section" id="session">
+            <div class="card" style="text-align:center">
+                <h2 style="color:#333;margin-bottom:15px">🎯 فتح حصة جديدة</h2>
+                <button class="session-btn" onclick="window.location.href='session.html'">فتح الحصة ▶️</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
+            authDomain: "center-app-30dc9.firebaseapp.com",
+            projectId: "center-app-30dc9",
+            storageBucket: "center-app-30dc9.firebasestorage.app",
+            messagingSenderId: "407314952817",
+            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.showSection = function(name) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(name).classList.add('active');
+            document.getElementById('btn-' + name).classList.add('active');
+            if (name === 'receipts') loadReceipts();
+            if (name === 'students') loadStudents();
+        }
+
+        async function loadStudents() {
+            const pendingList = document.getElementById('pendingList');
+            const approvedList = document.getElementById('approvedList');
+            pendingList.innerHTML = '<p style="text-align:center;color:#888">جاري التحميل...</p>';
+            approvedList.innerHTML = '';
+
+            const snapshot = await getDocs(collection(db, 'students'));
+            let pendingCount = 0, approvedCount = 0;
+            pendingList.innerHTML = '';
+
+            snapshot.forEach(docSnap => {
+                const s = docSnap.data();
+                const id = docSnap.id;
+
+                if (s.status === 'pending') {
+                    pendingCount++;
+                    pendingList.innerHTML += `
+                        <div class="card student-card">
+                            <div class="student-info">
+                                <h3>${s.name}</h3>
+                                <p>📱 ${s.phone}</p>
+                                <p>👨‍👦 ولي الأمر: ${s.parentPhone}</p>
+                                <span class="badge pending">في الانتظار</span>
+                            </div>
+                            <div>
+                                <button class="btn-reject" onclick="rejectStudent('${id}')">رفض</button>
+                                <button class="btn-approve" onclick="approveStudent('${id}')">قبول ✅</button>
+                            </div>
+                        </div>`;
+                } else if (s.status === 'approved') {
+                    approvedCount++;
+                    approvedList.innerHTML += `
+                        <div class="card student-card">
+                            <div class="student-info">
+                                <h3>${s.name}</h3>
+                                <p>📱 ${s.phone}</p>
+                                <p>👨‍👦 ولي الأمر: ${s.parentPhone}</p>
+                                <span class="badge approved">مقبول</span>
+                            </div>
+                        </div>`;
+                }
+            });
+
+            if (pendingCount === 0) pendingList.innerHTML = '<div class="empty">مفيش طلاب في الانتظار 🎉</div>';
+            if (approvedCount === 0) approvedList.innerHTML = '<div class="empty">مفيش طلاب مقبولين لسه</div>';
+        }
+
+        async function loadReceipts() {
+            const list = document.getElementById('receiptsList');
+            list.innerHTML = '<p style="text-align:center;color:#888">جاري التحميل...</p>';
+
+            const snapshot = await getDocs(collection(db, 'receipts'));
+            list.innerHTML = '';
+            let count = 0;
+
+            snapshot.forEach(docSnap => {
+                const r = docSnap.data();
+                const id = docSnap.id;
+                count++;
+                list.innerHTML += `
+                    <div class="card receipt-card">
+                        <div class="receipt-info">
+                            <p><strong>الاسم:</strong> ${r.studentName}</p>
+                            <p><strong>الشهر:</strong> ${r.month}</p>
+                            <p><strong>الحالة:</strong> ${r.status === 'pending' ? '⏳ في الانتظار' : r.status === 'confirmed' ? '✅ مؤكد' : '❌ مرفوض'}</p>
+                        </div>
+                        <img src="${r.image}" alt="إيصال ${r.studentName}">
+                        ${r.status === 'pending' ? `
+                        <div>
+                            <button class="btn-reject" onclick="rejectReceipt('${id}')">رفض</button>
+                            <button class="btn-confirm" onclick="confirmReceipt('${id}')">تأكيد الدفع ✅</button>
+                        </div>` : ''}
+                    </div>`;
+            });
+
+            if (count === 0) list.innerHTML = '<div class="empty">مفيش إيصالات لحد دلوقتي</div>';
+        }
+
+        window.approveStudent = async function(id) {
+            await updateDoc(doc(db, 'students', id), { status: 'approved' });
+            loadStudents();
+        }
+
+        window.rejectStudent = async function(id) {
+            await updateDoc(doc(db, 'students', id), { status: 'rejected' });
+            loadStudents();
+        }
+
+        window.confirmReceipt = async function(id) {
+            await updateDoc(doc(db, 'receipts', id), { status: 'confirmed' });
+            loadReceipts();
+        }
+
+        window.rejectReceipt = async function(id) {
+            await updateDoc(doc(db, 'receipts', id), { status: 'rejected' });
+            loadReceipts();
+        }
+
+        loadStudents();
+    </script>
+</body>
+</html>

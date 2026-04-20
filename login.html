@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سنتر - تسجيل دخول</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { color: #667eea; font-size: 28px; font-weight: 800; }
+        .logo p { color: #888; font-size: 14px; margin-top: 5px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; color: #444; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+            text-align: right;
+        }
+        input:focus { outline: none; border-color: #667eea; }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            font-family: inherit;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .register-link { text-align: center; margin-top: 20px; color: #888; font-size: 14px; }
+        .register-link a { color: #667eea; text-decoration: none; font-weight: 600; }
+        .msg { text-align: center; padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 14px; }
+        .msg.success { background: #e8f5e9; color: #2e7d32; }
+        .msg.error { background: #ffebee; color: #c62828; }
+        .msg.warning { background: #fff8e1; color: #f57f17; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">
+            <h1>📚 سنتر</h1>
+            <p>سجل دخولك</p>
+        </div>
+
+        <div class="form-group">
+            <label>رقم الموبايل</label>
+            <input type="tel" id="phone" placeholder="01xxxxxxxxx">
+        </div>
+
+        <div class="form-group">
+            <label>كلمة المرور</label>
+            <input type="password" id="password" placeholder="كلمة المرور">
+        </div>
+
+        <button class="btn" id="loginBtn" onclick="login()">دخول</button>
+        <div id="msg"></div>
+
+        <div class="register-link">
+            مش مسجل؟ <a href="index.html">سجل دلوقتي</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
+            authDomain: "center-app-30dc9.firebaseapp.com",
+            projectId: "center-app-30dc9",
+            storageBucket: "center-app-30dc9.firebasestorage.app",
+            messagingSenderId: "407314952817",
+            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.login = async function() {
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('loginBtn');
+            const msg = document.getElementById('msg');
+
+            if (!phone || !password) {
+                msg.className = 'msg error';
+                msg.textContent = 'من فضلك ادخل الرقم وكلمة المرور';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'جاري الدخول...';
+
+            try {
+                const q = query(
+                    collection(db, 'students'),
+                    where('phone', '==', phone),
+                    where('password', '==', password)
+                );
+                const result = await getDocs(q);
+
+                if (result.empty) {
+                    msg.className = 'msg error';
+                    msg.textContent = 'رقم الموبايل أو كلمة المرور غلط';
+                    btn.disabled = false;
+                    btn.textContent = 'دخول';
+                    return;
+                }
+
+                const student = result.docs[0].data();
+
+                if (student.status === 'pending') {
+                    msg.className = 'msg warning';
+                    msg.textContent = '⏳ حسابك لسه في انتظار موافقة المدرس';
+                    btn.disabled = false;
+                    btn.textContent = 'دخول';
+                    return;
+                }
+
+                if (student.status === 'approved') {
+                    msg.className = 'msg success';
+                    msg.textContent = '✅ أهلاً ' + student.name + '!';
+                    localStorage.setItem('student', JSON.stringify({
+                        id: result.docs[0].id,
+                        ...student
+                    }));
+                    setTimeout(() => {
+                        window.location.href = 'student.html';
+                    }, 1000);
+                }
+
+            } catch (error) {
+                msg.className = 'msg error';
+                msg.textContent = 'حصل خطأ، حاول تاني';
+                btn.disabled = false;
+                btn.textContent = 'دخول';
+            }
+        }
+    </script>
+</body>
+</html>

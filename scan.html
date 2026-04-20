@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سنتر - تسجيل الحضور</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        h1 { color: #667eea; font-size: 24px; margin-bottom: 10px; }
+        p { color: #888; font-size: 14px; margin-bottom: 20px; }
+        #reader {
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .msg { padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 15px; font-weight: 600; }
+        .msg.success { background: #e8f5e9; color: #2e7d32; }
+        .msg.error { background: #ffebee; color: #c62828; }
+        .msg.warning { background: #fff8e1; color: #f57f17; }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>📱 تسجيل الحضور</h1>
+        <p>وجّه الكاميرا على QR Code الحصة</p>
+        <div id="reader"></div>
+        <div id="msg"></div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
+            authDomain: "center-app-30dc9.firebaseapp.com",
+            projectId: "center-app-30dc9",
+            storageBucket: "center-app-30dc9.firebasestorage.app",
+            messagingSenderId: "407314952817",
+            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const student = JSON.parse(localStorage.getItem('student'));
+        if (!student) window.location.href = 'login.html';
+
+        // إحداثيات السنتر (هنحددها بعدين)
+        const CENTER_LAT = 30.0444;
+        const CENTER_LNG = 31.2357;
+        const MAX_DISTANCE = 200; // متر
+
+        function getDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371000;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        let scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: 250 });
+
+        scanner.render(async (code) => {
+            scanner.clear();
+            const msg = document.getElementById('msg');
+
+            // التحقق من الكود
+            if (!code.startsWith('SESSION-')) {
+                msg.className = 'msg error';
+                msg.textContent = '❌ QR Code غلط!';
+                return;
+            }
+
+            msg.className = 'msg warning';
+            msg.textContent = '📍 جاري التحقق من موقعك...';
+
+            // التحقق من الموقع
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const dist = getDistance(pos.coords.latitude, pos.coords.longitude, CENTER_LAT, CENTER_LNG);
+
+                if (dist > MAX_DISTANCE) {
+                    msg.className = 'msg error';
+                    msg.textContent = `❌ أنت بعيد عن السنتر (${Math.round(dist)} متر)`;
+                    return;
+                }
+
+                // استخراج session ID من الكود
+                const parts = code.split('-');
+                const sessionId = parts[1];
+
+                // التحقق إنه مسجلش قبل كده
+                const existing = await getDocs(query(
+                    collection(db, 'attendance'),
+                    where('sessionId', '==', sessionId),
+                    where('studentId', '==', student.id)
+                ));
+
+                if (!existing.empty) {
+                    msg.className = 'msg warning';
+                    msg.textContent = '⚠️ أنت سجلت حضورك قبل كده!';
+                    return;
+                }
+
+                // تسجيل الحضور
+                await addDoc(collection(db, 'attendance'), {
+                    sessionId,
+                    studentId: student.id,
+                    studentName: student.name,
+                    time: new Date().toISOString(),
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude
+                });
+
+                msg.className = 'msg success';
+                msg.textContent = '✅ تم تسجيل حضورك بنجاح!';
+
+            }, () => {
+                msg.className = 'msg error';
+                msg.textContent = '❌ مسمحتش بالموقع! لازم تسمح عشان تسجل حضورك';
+            });
+        });
+    </script>
+</body>
+</html>

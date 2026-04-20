@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سنتر - رفع الإيصال</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 20px; }
+        .back {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .card h2 { color: #667eea; font-size: 18px; margin-bottom: 20px; }
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .upload-area p { color: #888; font-size: 14px; margin-top: 10px; }
+        .upload-area .icon { font-size: 48px; }
+        #preview {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .msg { padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 14px; font-weight: 600; text-align: center; }
+        .msg.success { background: #e8f5e9; color: #2e7d32; }
+        .msg.error { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💰 رفع إيصال الدفع</h1>
+        <button class="back" onclick="window.location.href='student.html'">رجوع</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>📸 ارفع صورة الإيصال</h2>
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="icon">📄</div>
+                <p>اضغط هنا لاختيار صورة الإيصال</p>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="previewImage(event)">
+            <img id="preview" alt="معاينة الإيصال">
+            <button class="btn" id="uploadBtn" onclick="uploadReceipt()" disabled>رفع الإيصال 📤</button>
+            <div id="msg"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
+            authDomain: "center-app-30dc9.firebaseapp.com",
+            projectId: "center-app-30dc9",
+            storageBucket: "center-app-30dc9.firebasestorage.app",
+            messagingSenderId: "407314952817",
+            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const student = JSON.parse(localStorage.getItem('student'));
+        if (!student) window.location.href = 'login.html';
+
+        let imageBase64 = null;
+
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    img.onload = () => {
+                        const maxSize = 800;
+                        let w = img.width, h = img.height;
+                        if (w > maxSize || h > maxSize) {
+                            if (w > h) { h = h * maxSize / w; w = maxSize; }
+                            else { w = w * maxSize / h; h = maxSize; }
+                        }
+                        canvas.width = w;
+                        canvas.height = h;
+                        ctx.drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', 0.6));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        window.previewImage = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const compressed = await compressImage(file);
+            imageBase64 = compressed;
+            const preview = document.getElementById('preview');
+            preview.src = imageBase64;
+            preview.style.display = 'block';
+            document.getElementById('uploadBtn').disabled = false;
+        }
+
+        window.uploadReceipt = async function() {
+            if (!imageBase64) return;
+
+            const btn = document.getElementById('uploadBtn');
+            const msg = document.getElementById('msg');
+            btn.disabled = true;
+            btn.textContent = 'جاري الرفع...';
+
+            try {
+                const month = new Date().toLocaleDateString('ar-EG', { month: 'long', year: 'numeric' });
+
+                const existing = await getDocs(query(
+                    collection(db, 'receipts'),
+                    where('studentId', '==', student.id),
+                    where('month', '==', month)
+                ));
+
+                if (!existing.empty) {
+                    msg.className = 'msg error';
+                    msg.textContent = '⚠️ رفعت إيصال الشهر ده قبل كده!';
+                    btn.disabled = false;
+                    btn.textContent = 'رفع الإيصال 📤';
+                    return;
+                }
+
+                await addDoc(collection(db, 'receipts'), {
+                    studentId: student.id,
+                    studentName: student.name,
+                    month,
+                    image: imageBase64,
+                    status: 'pending',
+                    uploadedAt: new Date().toISOString()
+                });
+
+                msg.className = 'msg success';
+                msg.textContent = '✅ تم رفع الإيصال! في انتظار تأكيد المدرس';
+                btn.textContent = 'تم الرفع ✅';
+
+            } catch (error) {
+                msg.className = 'msg error';
+                msg.textContent = 'حصل خطأ، حاول تاني';
+                btn.disabled = false;
+                btn.textContent = 'رفع الإيصال 📤';
+            }
+        }
+    </script>
+</body>
+</html>
