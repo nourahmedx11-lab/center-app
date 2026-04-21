@@ -8,12 +8,36 @@
     <style>
         .qr-box { text-align: center; padding: 10px 0; }
         #qrCode { margin: 20px auto; display: inline-block; }
+        .qr-url {
+            background: rgba(108,99,255,0.1);
+            border: 1px solid rgba(108,99,255,0.25);
+            border-radius: 10px; padding: 10px 14px;
+            margin-top: 10px; font-size: 11px;
+            color: rgba(255,255,255,0.5); word-break: break-all;
+            direction: ltr; text-align: left;
+        }
+        .qr-hint {
+            background: rgba(17,153,142,0.1);
+            border: 1px solid rgba(17,153,142,0.25);
+            border-radius: 10px; padding: 10px 14px;
+            margin-top: 12px; font-size: 13px;
+            color: rgba(255,255,255,0.7); text-align: right; line-height: 1.6;
+        }
         .student-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
         .student-row:last-child { border-bottom: none; }
         .present { color: #2e7d32; font-weight: 700; }
         .wa-btn { background: #25D366; color: white; border: none; border-radius: 8px; padding: 8px 15px; font-size: 13px; cursor: pointer; font-family: 'Cairo',sans-serif; font-weight: 600; text-decoration: none; display: inline-block; }
         .absent-name { color: #333; font-weight: 600; }
         .absent-phone { color: #888; font-size: 12px; }
+        .timer-wrap { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+        .timer-label { font-size: 13px; color: rgba(255,255,255,0.5); }
+        .timer-val { font-size: 22px; font-weight: 800; color: #6c63ff; min-width: 50px; }
+        .attended-count {
+            display: inline-block; background: rgba(17,153,142,0.15);
+            border: 1px solid rgba(17,153,142,0.3); border-radius: 20px;
+            padding: 4px 14px; font-size: 13px; color: #11998e; font-weight: 700;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -23,30 +47,54 @@
     </div>
 
     <div class="container">
+
+        <!-- كارت البدء -->
         <div class="card" id="startCard" style="text-align:center">
-            <h2 style="color:#333;margin-bottom:15px;font-size:18px">🎯 فتح حصة جديدة</h2>
-            <p style="color:#888;font-size:14px;margin-bottom:20px">لما تفتح الحصة هيظهر QR Code ثابت طول الحصة</p>
+            <h2 style="color:#333;margin-bottom:10px;font-size:18px">🎯 فتح حصة جديدة</h2>
+            <p style="color:#888;font-size:14px;margin-bottom:20px;line-height:1.6">
+                لما تفتح الحصة هيظهر QR Code.<br>
+                الطلاب يصوروه بكاميرا الموبايل العادية ويتسجل حضورهم أوتوماتيك ✅
+            </p>
             <button class="btn" onclick="startSession()">فتح الحصة ▶️</button>
         </div>
 
+        <!-- كارت QR -->
         <div id="qrContainer" class="card qr-box" style="display:none">
-            <h2 style="color:#333;margin-bottom:10px;font-size:18px">📱 QR Code الحصة</h2>
+            <h2 style="color:#333;margin-bottom:5px;font-size:18px">📱 QR Code الحصة</h2>
+            <div class="attended-count" id="liveCount">0 حضروا</div>
             <div id="qrCode"></div>
-            <div style="background:#f8f9ff;border-radius:10px;padding:12px;margin-top:15px;text-align:right">
-                <p style="color:#555;font-size:13px">وقت البدء: <strong id="startTime" style="color:#6c63ff">-</strong></p>
+
+            <div class="qr-hint">
+                📲 الطالب يفتح كاميرا موبايله العادية ويصور الكود — مش محتاج يدخل على الموقع
             </div>
-            <button class="btn" style="background:linear-gradient(135deg,#ff4444,#cc0000);margin-top:15px" onclick="endSession()">إنهاء الحصة ⏹️</button>
+
+            <div class="qr-url" id="qrUrl"></div>
+
+            <div style="background:#f8f9ff;border-radius:10px;padding:12px;margin-top:12px;text-align:right">
+                <p style="color:#555;font-size:13px">وقت البدء: <strong id="startTime" style="color:#6c63ff">-</strong></p>
+                <div class="timer-wrap">
+                    <span class="timer-label">مدة الحصة:</span>
+                    <span class="timer-val" id="timerDisplay">00:00</span>
+                </div>
+            </div>
+
+            <button class="btn" style="background:linear-gradient(135deg,#ff4444,#cc0000);margin-top:15px;width:100%" onclick="endSession()">
+                إنهاء الحصة ⏹️
+            </button>
         </div>
 
+        <!-- الحضور الحي -->
         <div class="card" id="attendanceCard" style="display:none">
-            <div class="card-title">✅ الحضور الآن</div>
+            <div class="card-title">✅ الحضور الحي</div>
             <div id="attendanceList"></div>
         </div>
 
+        <!-- الغايبين بعد الإنهاء -->
         <div class="card" id="absenceCard" style="display:none">
-            <div class="card-title">❌ الغايبين - تواصل مع أولياء الأمور</div>
+            <div class="card-title">❌ الغايبين — تواصل مع أولياء الأمور</div>
             <div id="absenceList"></div>
         </div>
+
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -65,46 +113,101 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
         let sessionId = null;
         let attendedIds = [];
+        let timerInterval = null;
+        let startTimestamp = null;
+
+        // رابط الموقع الأساسي
+        const BASE_URL = 'https://nourahmedx11-lab.github.io/center-app/scan.html';
+
+        function startTimer() {
+            startTimestamp = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+                const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const s = (elapsed % 60).toString().padStart(2, '0');
+                document.getElementById('timerDisplay').textContent = m + ':' + s;
+            }, 1000);
+        }
 
         window.startSession = async function() {
             const now = new Date();
             const sessionRef = await addDoc(collection(db, 'sessions'), {
                 startTime: now.toISOString(),
                 status: 'active',
+                sessionId: '', // هنحدثه بعد كده
                 date: now.toLocaleDateString('ar-EG')
             });
+
             sessionId = sessionRef.id;
+
+            // حفظ sessionId جوا الـ document نفسه
+            await updateDoc(doc(db, 'sessions', sessionId), { sessionId });
+
+            const scanUrl = BASE_URL + '?s=' + sessionId;
+
             document.getElementById('startTime').textContent = now.toLocaleTimeString('ar-EG');
             document.getElementById('qrContainer').style.display = 'block';
             document.getElementById('startCard').style.display = 'none';
+            document.getElementById('qrUrl').textContent = scanUrl;
 
+            // ولّد QR كرابط كامل — الموبايل يصوره بالكاميرا العادية
             new QRCode(document.getElementById('qrCode'), {
-                text: 'SESSION-' + sessionId,
-                width: 220, height: 220,
-                colorDark: '#6c63ff', colorLight: '#ffffff'
+                text: scanUrl,
+                width: 220,
+                height: 220,
+                colorDark: '#6c63ff',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
             });
 
-            onSnapshot(query(collection(db, 'attendance'), where('sessionId', '==', sessionId)), (snap) => {
-                const list = document.getElementById('attendanceList');
-                const card = document.getElementById('attendanceCard');
-                card.style.display = 'block';
-                attendedIds = [];
-                list.innerHTML = '';
-                snap.forEach(d => {
-                    const a = d.data();
-                    attendedIds.push(a.studentId);
-                    list.innerHTML += `<div class="student-row"><span class="present">✅ حاضر</span><span>${a.studentName}</span></div>`;
-                });
-                if (snap.empty) list.innerHTML = '<div class="empty">مفيش حد مسح لحد دلوقتي</div>';
-            });
+            startTimer();
+
+            // اسمع على الحضور لحظة بلحظة
+            onSnapshot(
+                query(collection(db, 'attendance'), where('sessionId', '==', sessionId)),
+                (snap) => {
+                    const list = document.getElementById('attendanceList');
+                    const card = document.getElementById('attendanceCard');
+                    card.style.display = 'block';
+                    attendedIds = [];
+                    list.innerHTML = '';
+
+                    snap.forEach(d => {
+                        const a = d.data();
+                        attendedIds.push(a.studentId);
+                        const time = a.time ? new Date(a.time).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+                        list.innerHTML += `
+                            <div class="student-row">
+                                <span style="color:#888;font-size:12px">${time}</span>
+                                <span>${a.studentName}</span>
+                                <span class="present">✅ حاضر</span>
+                            </div>`;
+                    });
+
+                    document.getElementById('liveCount').textContent = snap.size + ' حضروا';
+
+                    if (snap.empty) {
+                        list.innerHTML = '<div class="empty">لسه مفيش حد مسح الكود</div>';
+                    }
+                }
+            );
         }
 
         window.endSession = async function() {
-            if (sessionId) await updateDoc(doc(db, 'sessions', sessionId), { status: 'ended' });
+            if (!confirm('تأكيد إنهاء الحصة؟')) return;
+
+            clearInterval(timerInterval);
+
+            if (sessionId) {
+                await updateDoc(doc(db, 'sessions', sessionId), { status: 'ended', endTime: new Date().toISOString() });
+            }
+
             document.getElementById('qrContainer').style.display = 'none';
 
+            // جلب الطلاب الغايبين
             const studentsSnap = await getDocs(query(collection(db, 'students'), where('status', '==', 'approved')));
             const absenceCard = document.getElementById('absenceCard');
             const absenceList = document.getElementById('absenceList');
@@ -116,8 +219,10 @@
                 const s = d.data();
                 if (!attendedIds.includes(d.id)) {
                     absentCount++;
-                    const phone = s.parentPhone.replace(/^0/, '20');
-                    const msg = encodeURIComponent(`عزيزي ولي أمر ${s.name}، نفيدكم بأن ${s.name} لم يحضر حصة اليوم. للاستفسار تواصلوا مع المدرس.`);
+                    const phone = (s.parentPhone || '').replace(/^0/, '20').replace(/\D/g,'');
+                    const msg = encodeURIComponent(
+                        `عزيزي ولي أمر ${s.name}، نفيدكم بأن ${s.name} لم يحضر حصة اليوم ${new Date().toLocaleDateString('ar-EG')}. للاستفسار تواصلوا مع المدرس.`
+                    );
                     absenceList.innerHTML += `
                         <div class="student-row">
                             <a class="wa-btn" href="https://wa.me/${phone}?text=${msg}" target="_blank">📱 واتساب</a>
@@ -129,7 +234,9 @@
                 }
             });
 
-            if (absentCount === 0) absenceList.innerHTML = '<p style="color:#2e7d32;text-align:center;padding:20px;font-weight:700">🎉 الكل حضر!</p>';
+            if (absentCount === 0) {
+                absenceList.innerHTML = '<p style="color:#2e7d32;text-align:center;padding:20px;font-weight:700">🎉 الكل حضر!</p>';
+            }
         }
     </script>
 </body>
