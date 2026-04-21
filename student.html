@@ -6,44 +6,39 @@
     <title>سنتر - بروفايل الطالب</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .welcome-card {
-            text-align: center;
-            padding: 30px 20px;
+        .welcome-card { text-align: center; padding: 30px 20px; }
+        .avatar-circle {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: linear-gradient(135deg, #6c63ff, #11998e);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; margin: 0 auto 12px;
         }
-        .student-name {
-            font-size: 22px;
-            font-weight: 800;
-            margin: 10px 0 5px;
-        }
-        .student-phone {
-            color: rgba(255,255,255,0.5);
-            font-size: 14px;
-        }
-        .score-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
+        .student-name { font-size: 22px; font-weight: 800; margin: 0 0 4px; }
+        .student-phone { color: rgba(255,255,255,0.5); font-size: 14px; }
+        .score-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 20px; }
         .score-item {
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 12px 8px;
-            text-align: center;
+            border-radius: 12px; padding: 12px 8px; text-align: center;
         }
         .score-num {
-            font-size: 22px;
-            font-weight: 800;
+            font-size: 22px; font-weight: 800;
             background: linear-gradient(135deg, #6c63ff, #11998e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .score-label {
-            font-size: 11px;
-            color: rgba(255,255,255,0.5);
-            margin-top: 3px;
+        .score-label { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 3px; }
+
+        /* زرار تسجيل الحضور — بارز ومميز */
+        .scan-big-btn {
+            display: block; width: 100%;
+            background: linear-gradient(135deg, #6c63ff, #5a52d5);
+            color: white; border: none; border-radius: 16px;
+            padding: 18px; font-size: 17px; font-weight: 800;
+            font-family: 'Cairo', sans-serif; cursor: pointer;
+            text-align: center; text-decoration: none;
+            margin-bottom: 16px;
         }
+        .scan-big-btn span { display: block; font-size: 12px; font-weight: 400; opacity: 0.75; margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -53,8 +48,10 @@
     </div>
 
     <div class="container">
+
+        <!-- بروفايل -->
         <div class="card welcome-card">
-            <div class="avatar">👤</div>
+            <div class="avatar-circle">👤</div>
             <div class="student-name" id="studentName">جاري التحميل...</div>
             <div class="student-phone" id="studentPhone"></div>
             <span class="badge badge-success" style="margin-top:10px;display:inline-block">✅ طالب مقبول</span>
@@ -74,12 +71,14 @@
             </div>
         </div>
 
+        <!-- زرار تسجيل الحضور الكبير -->
+        <a class="scan-big-btn" href="scan.html" id="scan-btn">
+            📱 تسجيل الحضور
+            <span>صوّر QR Code الحصة بكاميرتك العادية أو اضغط هنا</span>
+        </a>
+
+        <!-- باقي الأزرار -->
         <div class="actions-grid">
-            <a class="action-btn" href="scan.html">
-                <div class="icon">📱</div>
-                <div class="title">تسجيل الحضور</div>
-                <div class="sub">امسح QR الحصة</div>
-            </a>
             <a class="action-btn" href="take-exam.html">
                 <div class="icon">📝</div>
                 <div class="title">الاختبارات</div>
@@ -97,6 +96,7 @@
             </a>
         </div>
 
+        <!-- بياناتي -->
         <div class="card">
             <div class="card-title">📋 بياناتي</div>
             <div class="info-row">
@@ -113,18 +113,21 @@
             </div>
         </div>
 
+        <!-- حالة الدفع -->
         <div class="card">
             <div class="card-title">💰 حالة الدفع</div>
             <div class="info-row">
-                <span class="label">شهر أبريل</span>
+                <span class="label" id="payMonth">هذا الشهر</span>
                 <span class="value" id="paymentStatus"><span class="badge badge-danger">لم يدفع</span></span>
             </div>
         </div>
 
+        <!-- الاختبارات -->
         <div class="card">
             <div class="card-title">📝 الاختبارات</div>
             <div id="examResults"><div class="empty">مفيش اختبارات لحد دلوقتي</div></div>
         </div>
+
     </div>
 
     <script type="module">
@@ -146,30 +149,34 @@
         const student = JSON.parse(localStorage.getItem('student'));
         if (!student) window.location.href = 'login.html';
 
+        // بيانات الطالب
         document.getElementById('studentName').textContent = student.name;
         document.getElementById('studentPhone').textContent = student.phone;
         document.getElementById('infoName').textContent = student.name;
         document.getElementById('infoPhone').textContent = student.phone;
         document.getElementById('infoParent').textContent = student.parentPhone;
 
+        // حالة الدفع
         const month = new Date().toLocaleDateString('ar-EG', { month: 'long', year: 'numeric' });
+        document.getElementById('payMonth').textContent = month;
         const receipts = await getDocs(query(collection(db, 'receipts'), where('studentId', '==', student.id)));
         receipts.forEach(d => {
             const r = d.data();
             if (r.month === month) {
-                const status = r.status === 'confirmed' ?
-                    '<span class="badge badge-success">✅ دفع</span>' :
-                    '<span class="badge badge-warning">⏳ في الانتظار</span>';
-                document.getElementById('paymentStatus').innerHTML = status;
+                document.getElementById('paymentStatus').innerHTML = r.status === 'confirmed'
+                    ? '<span class="badge badge-success">✅ دفع</span>'
+                    : '<span class="badge badge-warning">⏳ في الانتظار</span>';
             }
         });
 
+        // الحضور
         const attendance = await getDocs(query(collection(db, 'attendance'), where('studentId', '==', student.id)));
         const sessions = await getDocs(collection(db, 'sessions'));
         document.getElementById('totalLessons').textContent = sessions.size;
         document.getElementById('attended').textContent = attendance.size;
         document.getElementById('absent').textContent = Math.max(0, sessions.size - attendance.size);
 
+        // الاختبارات
         const examResults = await getDocs(query(collection(db, 'examResults'), where('studentId', '==', student.id)));
         const examDiv = document.getElementById('examResults');
         if (!examResults.empty) {
