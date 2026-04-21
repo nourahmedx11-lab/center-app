@@ -28,6 +28,27 @@
         .login-link { text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); font-size: 14px; }
         .login-link a { color: #6c63ff; text-decoration: none; font-weight: 700; }
         label { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 5px; display: block; font-weight: 600; }
+
+        /* OTP step */
+        #step-otp { display: none; }
+        .otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 16px 0; }
+        .otp-inputs input {
+            width: 48px; height: 56px;
+            text-align: center; font-size: 22px; font-weight: 700;
+            background: rgba(255,255,255,0.07);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 12px; color: #fff;
+            outline: none; transition: border-color .2s;
+        }
+        .otp-inputs input:focus { border-color: #6c63ff; }
+        .otp-hint { color: rgba(255,255,255,0.45); font-size: 13px; text-align: center; margin-bottom: 6px; }
+        .resend-btn {
+            background: none; border: none; color: #6c63ff;
+            font-size: 13px; cursor: pointer; text-decoration: underline;
+            display: block; margin: 8px auto 0;
+        }
+        .resend-btn:disabled { color: rgba(255,255,255,0.3); cursor: default; text-decoration: none; }
+        #recaptcha-container { display: flex; justify-content: center; margin: 12px 0; }
     </style>
 </head>
 <body>
@@ -38,7 +59,8 @@
             <p>سجل بياناتك للانضمام</p>
         </div>
 
-        <div class="card">
+        <!-- الخطوة 1: بيانات التسجيل -->
+        <div class="card" id="step-register">
             <div class="form-group">
                 <label>الاسم بالكامل</label>
                 <input type="text" id="name" placeholder="أدخل اسمك">
@@ -55,8 +77,31 @@
                 <label>كلمة المرور</label>
                 <input type="password" id="password" placeholder="اختار كلمة مرور">
             </div>
-            <button class="btn" id="registerBtn" onclick="register()">تسجيل 🚀</button>
+            <div id="recaptcha-container"></div>
+            <button class="btn" id="sendOtpBtn" onclick="sendOTP()">إرسال كود التحقق 📱</button>
             <div id="msg"></div>
+        </div>
+
+        <!-- الخطوة 2: إدخال OTP -->
+        <div class="card" id="step-otp">
+            <div style="text-align:center; margin-bottom: 8px;">
+                <span style="font-size:36px">📩</span>
+            </div>
+            <p class="otp-hint">أُرسل كود مكون من 6 أرقام على رقم</p>
+            <p class="otp-hint" id="otp-phone-display" style="color:#6c63ff; font-weight:700; font-size:15px;"></p>
+            <div class="otp-inputs" id="otp-boxes">
+                <input type="tel" maxlength="1" oninput="moveNext(this,1)" onkeydown="movePrev(event,this)">
+                <input type="tel" maxlength="1" oninput="moveNext(this,2)" onkeydown="movePrev(event,this)">
+                <input type="tel" maxlength="1" oninput="moveNext(this,3)" onkeydown="movePrev(event,this)">
+                <input type="tel" maxlength="1" oninput="moveNext(this,4)" onkeydown="movePrev(event,this)">
+                <input type="tel" maxlength="1" oninput="moveNext(this,5)" onkeydown="movePrev(event,this)">
+                <input type="tel" maxlength="1" oninput="moveNext(this,6)" onkeydown="movePrev(event,this)">
+            </div>
+            <button class="btn" id="verifyBtn" onclick="verifyOTP()">تأكيد وتسجيل ✅</button>
+            <button class="resend-btn" id="resendBtn" onclick="resendOTP()" disabled>
+                إعادة إرسال الكود (<span id="countdown">60</span>s)
+            </button>
+            <div id="msg2"></div>
         </div>
 
         <div class="login-link">
@@ -67,6 +112,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
@@ -79,13 +125,42 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        auth.languageCode = 'ar';
 
-        window.register = async function() {
+        let confirmationResult = null;
+        let pendingData = null;
+        let countdownInterval = null;
+
+        // تحويل الرقم المصري لصيغة دولية
+        function toE164(phone) {
+            const clean = phone.replace(/\D/g, '');
+            if (clean.startsWith('0')) return '+2' + clean;
+            if (clean.startsWith('2')) return '+' + clean;
+            return '+2' + clean;
+        }
+
+        function setupRecaptcha() {
+            if (!window.recaptchaVerifier) {
+                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                    size: 'normal',
+                    callback: () => {},
+                    'expired-callback': () => {
+                        window.recaptchaVerifier = null;
+                    }
+                });
+                window.recaptchaVerifier.render();
+            }
+        }
+
+        setupRecaptcha();
+
+        window.sendOTP = async function() {
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const parentPhone = document.getElementById('parentPhone').value.trim();
             const password = document.getElementById('password').value.trim();
-            const btn = document.getElementById('registerBtn');
+            const btn = document.getElementById('sendOtpBtn');
             const msg = document.getElementById('msg');
 
             if (!name || !phone || !parentPhone || !password) {
@@ -93,7 +168,6 @@
                 msg.textContent = '❌ من فضلك املأ كل البيانات';
                 return;
             }
-
             if (phone.length < 11) {
                 msg.className = 'msg msg-error';
                 msg.textContent = '❌ رقم الموبايل غلط';
@@ -101,35 +175,135 @@
             }
 
             btn.disabled = true;
-            btn.textContent = 'جاري التسجيل...';
+            btn.textContent = 'جاري الإرسال...';
+            msg.textContent = '';
 
             try {
+                // تحقق من عدم وجود الرقم مسبقاً
                 const q = query(collection(db, 'students'), where('phone', '==', phone));
                 const existing = await getDocs(q);
-
                 if (!existing.empty) {
                     msg.className = 'msg msg-error';
                     msg.textContent = '❌ الرقم ده مسجل قبل كده!';
                     btn.disabled = false;
-                    btn.textContent = 'تسجيل 🚀';
+                    btn.textContent = 'إرسال كود التحقق 📱';
                     return;
                 }
 
+                pendingData = { name, phone, parentPhone, password };
+                const phoneE164 = toE164(phone);
+
+                confirmationResult = await signInWithPhoneNumber(auth, phoneE164, window.recaptchaVerifier);
+
+                // اظهر خطوة OTP
+                document.getElementById('step-register').style.display = 'none';
+                document.getElementById('step-otp').style.display = 'block';
+                document.getElementById('otp-phone-display').textContent = phone;
+                document.getElementById('otp-boxes').querySelectorAll('input')[0].focus();
+
+                startCountdown();
+
+            } catch (err) {
+                console.error(err);
+                msg.className = 'msg msg-error';
+                msg.textContent = '❌ فشل إرسال الكود. تأكد من الرقم وحاول تاني';
+                btn.disabled = false;
+                btn.textContent = 'إرسال كود التحقق 📱';
+                window.recaptchaVerifier = null;
+                setupRecaptcha();
+            }
+        }
+
+        window.verifyOTP = async function() {
+            const inputs = document.getElementById('otp-boxes').querySelectorAll('input');
+            const code = Array.from(inputs).map(i => i.value).join('');
+            const btn = document.getElementById('verifyBtn');
+            const msg = document.getElementById('msg2');
+
+            if (code.length < 6) {
+                msg.className = 'msg msg-error';
+                msg.textContent = '❌ ادخل الكود كامل (6 أرقام)';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'جاري التحقق...';
+
+            try {
+                await confirmationResult.confirm(code);
+
+                // تم التحقق — احفظ في Firestore
                 await addDoc(collection(db, 'students'), {
-                    name, phone, parentPhone, password,
+                    ...pendingData,
                     status: 'pending',
                     createdAt: new Date().toISOString()
                 });
 
                 msg.className = 'msg msg-success';
                 msg.textContent = '✅ تم التسجيل! في انتظار موافقة المدرس';
-                btn.textContent = 'تم التسجيل ✅';
+                btn.textContent = 'تم ✅';
+                clearInterval(countdownInterval);
 
-            } catch (error) {
+            } catch (err) {
+                console.error(err);
                 msg.className = 'msg msg-error';
-                msg.textContent = 'حصل خطأ، حاول تاني';
+                msg.textContent = '❌ الكود غلط أو انتهت صلاحيته';
                 btn.disabled = false;
-                btn.textContent = 'تسجيل 🚀';
+                btn.textContent = 'تأكيد وتسجيل ✅';
+            }
+        }
+
+        window.resendOTP = async function() {
+            const btn = document.getElementById('resendBtn');
+            btn.disabled = true;
+            window.recaptchaVerifier = null;
+            setupRecaptcha();
+            try {
+                const phoneE164 = toE164(pendingData.phone);
+                confirmationResult = await signInWithPhoneNumber(auth, phoneE164, window.recaptchaVerifier);
+                document.getElementById('msg2').className = 'msg msg-success';
+                document.getElementById('msg2').textContent = '✅ تم إعادة إرسال الكود';
+                startCountdown();
+            } catch (err) {
+                document.getElementById('msg2').className = 'msg msg-error';
+                document.getElementById('msg2').textContent = '❌ فشل إعادة الإرسال، حاول بعد شوية';
+            }
+        }
+
+        function startCountdown() {
+            clearInterval(countdownInterval);
+            let secs = 60;
+            const btn = document.getElementById('resendBtn');
+            const span = document.getElementById('countdown');
+            btn.disabled = true;
+            span.textContent = secs;
+            countdownInterval = setInterval(() => {
+                secs--;
+                span.textContent = secs;
+                if (secs <= 0) {
+                    clearInterval(countdownInterval);
+                    btn.disabled = false;
+                    btn.textContent = 'إعادة إرسال الكود';
+                }
+            }, 1000);
+        }
+
+        // تنقل بين خانات OTP
+        window.moveNext = function(el, idx) {
+            el.value = el.value.replace(/\D/g, '');
+            if (el.value && idx < 6) {
+                document.getElementById('otp-boxes').querySelectorAll('input')[idx].focus();
+            }
+            // لو اكتمل تلقائياً
+            const all = document.getElementById('otp-boxes').querySelectorAll('input');
+            if (Array.from(all).every(i => i.value)) verifyOTP();
+        }
+
+        window.movePrev = function(e, el) {
+            if (e.key === 'Backspace' && !el.value) {
+                const inputs = document.getElementById('otp-boxes').querySelectorAll('input');
+                const idx = Array.from(inputs).indexOf(el);
+                if (idx > 0) inputs[idx - 1].focus();
             }
         }
     </script>
