@@ -6,85 +6,61 @@
     <title>سنتر - لوحة المدرس</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .student-card { display: flex; justify-content: space-between; align-items: center; }
+        .student-card { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+        .student-card:last-child { border-bottom: none; }
         .student-info h3 { color: #333; font-size: 16px; margin-bottom: 5px; }
         .student-info p { color: #888; font-size: 13px; margin-bottom: 3px; }
-        .btn-approve {
-            padding: 10px 18px;
-            background: linear-gradient(135deg, #6c63ff, #5a52d5);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-        }
-        .btn-reject {
-            padding: 10px 18px;
-            background: #ffebee;
-            color: #c62828;
-            border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-            margin-right: 8px;
-        }
-        .btn-confirm {
-            padding: 10px 18px;
-            background: linear-gradient(135deg, #11998e, #38ef7d);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-            margin-right: 8px;
-        }
-        .receipt-card img { width: 100%; border-radius: 10px; margin: 15px 0; }
+        .btn-approve { padding: 10px 18px; background: linear-gradient(135deg, #6c63ff, #5a52d5); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; }
+        .btn-reject { padding: 10px 18px; background: #ffebee; color: #c62828; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; margin-right: 8px; }
+        .btn-confirm { padding: 10px 18px; background: linear-gradient(135deg, #11998e, #38ef7d); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; margin-right: 8px; }
+        .receipt-card { padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+        .receipt-card:last-child { border-bottom: none; }
+        .receipt-card img { width: 100%; border-radius: 10px; margin: 10px 0; }
         .receipt-info p { color: #555; font-size: 14px; margin-bottom: 5px; }
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
-        }
+        .result-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
         .result-row:last-child { border-bottom: none; }
         .score { font-weight: 700; color: #6c63ff; }
-        .session-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #6c63ff, #5a52d5);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-            margin-top: 10px;
-        }
+        .session-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #6c63ff, #5a52d5); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; margin-top: 10px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* الحضور */
+        .att-session { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .att-session:last-child { border-bottom: none; }
+        .att-date { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 6px; }
+        .att-names { font-size: 12px; color: #666; line-height: 1.8; }
+        .att-count { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-right: 6px; }
+
+        /* إحصائيات سريعة */
+        .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-box { background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(17,153,142,0.1)); border: 1px solid rgba(108,99,255,0.2); border-radius: 12px; padding: 14px; text-align: center; }
+        .stat-num { font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #6c63ff, #11998e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { font-size: 11px; color: #888; margin-top: 2px; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>📚 لوحة المدرس</h1>
-        <span style="color:white;font-size:13px">مرحباً بك</span>
+        <button class="header-btn" onclick="logout()">خروج</button>
     </div>
 
     <div class="nav">
         <button class="nav-btn active" id="btn-students" onclick="showSection('students')">👥 الطلاب</button>
+        <button class="nav-btn" id="btn-attendance" onclick="showSection('attendance')">✅ الحضور</button>
         <button class="nav-btn" id="btn-receipts" onclick="showSection('receipts')">💰 الإيصالات</button>
         <button class="nav-btn" id="btn-exams" onclick="showSection('exams')">📝 الاختبارات</button>
         <button class="nav-btn" id="btn-session" onclick="showSection('session')">📱 فتح حصة</button>
     </div>
 
     <div class="container">
+
+        <!-- الطلاب -->
         <div class="section active" id="students">
+            <div class="stats-row" id="statsRow">
+                <div class="stat-box"><div class="stat-num" id="stat-total">-</div><div class="stat-label">إجمالي</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-approved">-</div><div class="stat-label">مقبولون</div></div>
+                <div class="stat-box"><div class="stat-num" id="stat-pending">-</div><div class="stat-label">انتظار</div></div>
+            </div>
             <div class="card">
                 <div class="card-title">⏳ الطلاب المنتظرون الموافقة</div>
                 <div id="pendingList"></div>
@@ -95,6 +71,15 @@
             </div>
         </div>
 
+        <!-- الحضور -->
+        <div class="section" id="attendance">
+            <div class="card">
+                <div class="card-title">📋 سجل الحضور — كل الحصص</div>
+                <div id="attendanceLog"></div>
+            </div>
+        </div>
+
+        <!-- الإيصالات -->
         <div class="section" id="receipts">
             <div class="card">
                 <div class="card-title">💰 إيصالات الدفع</div>
@@ -102,6 +87,7 @@
             </div>
         </div>
 
+        <!-- الاختبارات -->
         <div class="section" id="exams">
             <div class="card">
                 <button class="session-btn" onclick="window.location.href='exam.html'">➕ إنشاء اختبار جديد</button>
@@ -112,22 +98,23 @@
             </div>
         </div>
 
+        <!-- فتح حصة -->
         <div class="section" id="session">
             <div class="card" style="text-align:center">
-                <h2 style="color:#333;margin-bottom:15px">🎯 فتح حصة جديدة</h2>
+                <h2 style="color:#333;margin-bottom:10px;font-size:18px">🎯 فتح حصة جديدة</h2>
+                <p style="color:#888;font-size:14px;margin-bottom:16px;line-height:1.6">
+                    هيظهر QR Code الطلاب يصوروه بكاميرا موبايلهم العادية<br>
+                    ويتسجل حضورهم أوتوماتيك ✅
+                </p>
                 <button class="session-btn" onclick="window.location.href='session.html'">فتح الحصة ▶️</button>
             </div>
         </div>
-    </div>
 
-    <style>
-        .section { display: none; }
-        .section.active { display: block; }
-    </style>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
@@ -141,6 +128,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        window.logout = function() {
+            localStorage.removeItem('adminLoggedIn');
+            window.location.href = 'login.html';
+        }
+
         window.showSection = function(name) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -149,6 +141,7 @@
             if (name === 'receipts') loadReceipts();
             if (name === 'students') loadStudents();
             if (name === 'exams') loadExams();
+            if (name === 'attendance') loadAttendance();
         }
 
         async function loadStudents() {
@@ -158,17 +151,19 @@
             approvedList.innerHTML = '';
 
             const snapshot = await getDocs(collection(db, 'students'));
-            let pendingCount = 0, approvedCount = 0;
+            let pending = 0, approved = 0, total = 0;
             pendingList.innerHTML = '';
+            approvedList.innerHTML = '';
 
             snapshot.forEach(docSnap => {
                 const s = docSnap.data();
                 const id = docSnap.id;
+                total++;
 
                 if (s.status === 'pending') {
-                    pendingCount++;
+                    pending++;
                     pendingList.innerHTML += `
-                        <div class="student-card" style="padding:15px 0;border-bottom:1px solid #f0f0f0">
+                        <div class="student-card">
                             <div class="student-info">
                                 <h3>${s.name}</h3>
                                 <p>📱 ${s.phone}</p>
@@ -181,20 +176,63 @@
                             </div>
                         </div>`;
                 } else if (s.status === 'approved') {
-                    approvedCount++;
+                    approved++;
                     approvedList.innerHTML += `
-                        <div class="student-card" style="padding:15px 0;border-bottom:1px solid #f0f0f0">
+                        <div class="student-card">
                             <div class="student-info">
                                 <h3>${s.name}</h3>
                                 <p>📱 ${s.phone}</p>
                                 <span class="badge badge-success">مقبول</span>
                             </div>
+                            <button class="btn-reject" style="font-size:11px;padding:6px 10px" onclick="rejectStudent('${id}')">حذف</button>
                         </div>`;
                 }
             });
 
-            if (pendingCount === 0) pendingList.innerHTML = '<div class="empty">مفيش طلاب في الانتظار 🎉</div>';
-            if (approvedCount === 0) approvedList.innerHTML = '<div class="empty">مفيش طلاب مقبولين لسه</div>';
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-approved').textContent = approved;
+            document.getElementById('stat-pending').textContent = pending;
+
+            if (pending === 0) pendingList.innerHTML = '<div class="empty">مفيش طلاب في الانتظار 🎉</div>';
+            if (approved === 0) approvedList.innerHTML = '<div class="empty">مفيش طلاب مقبولين لسه</div>';
+        }
+
+        async function loadAttendance() {
+            const log = document.getElementById('attendanceLog');
+            log.innerHTML = '<p style="text-align:center;color:#888;padding:20px">جاري التحميل...</p>';
+
+            const sessions = await getDocs(collection(db, 'sessions'));
+            const allAttendance = await getDocs(collection(db, 'attendance'));
+
+            // نجمّع الحضور حسب sessionId
+            const attMap = {};
+            allAttendance.forEach(d => {
+                const a = d.data();
+                if (!attMap[a.sessionId]) attMap[a.sessionId] = [];
+                attMap[a.sessionId].push(a.studentName);
+            });
+
+            log.innerHTML = '';
+            let count = 0;
+
+            sessions.forEach(d => {
+                const s = d.data();
+                count++;
+                const names = attMap[d.id] || [];
+                const date = s.date || new Date(s.startTime).toLocaleDateString('ar-EG');
+                const time = s.startTime ? new Date(s.startTime).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
+                log.innerHTML += `
+                    <div class="att-session">
+                        <div class="att-date">
+                            <span class="att-count">${names.length} حضروا</span>
+                            ${date} — ${time}
+                            <span style="font-size:11px;color:#aaa;margin-right:6px">${s.status === 'active' ? '🟢 جارية' : '⚫ انتهت'}</span>
+                        </div>
+                        <div class="att-names">${names.length > 0 ? names.join(' · ') : '<span style="color:#aaa">لا أحد</span>'}</div>
+                    </div>`;
+            });
+
+            if (count === 0) log.innerHTML = '<div class="empty">مفيش حصص لحد دلوقتي</div>';
         }
 
         async function loadReceipts() {
@@ -210,13 +248,13 @@
                 const id = docSnap.id;
                 count++;
                 list.innerHTML += `
-                    <div class="receipt-card" style="padding:15px 0;border-bottom:1px solid #f0f0f0">
+                    <div class="receipt-card">
                         <div class="receipt-info">
                             <p><strong>الاسم:</strong> ${r.studentName}</p>
                             <p><strong>الشهر:</strong> ${r.month}</p>
                             <p><strong>الحالة:</strong> ${r.status === 'pending' ? '⏳ في الانتظار' : r.status === 'confirmed' ? '✅ مؤكد' : '❌ مرفوض'}</p>
                         </div>
-                        <img src="${r.image}" alt="إيصال">
+                        ${r.image ? `<img src="${r.image}" alt="إيصال">` : ''}
                         ${r.status === 'pending' ? `
                         <div>
                             <button class="btn-reject" onclick="rejectReceipt('${id}')">رفض</button>
@@ -256,6 +294,7 @@
             loadStudents();
         }
         window.rejectStudent = async function(id) {
+            if (!confirm('تأكيد الحذف؟')) return;
             await updateDoc(doc(db, 'students', id), { status: 'rejected' });
             loadStudents();
         }
