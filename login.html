@@ -7,51 +7,33 @@
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 20px;
             background: radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f1a 70%);
         }
-        .login-box {
-            width: 100%;
-            max-width: 420px;
-        }
-        .logo {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-        .logo-icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-            display: block;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+        .login-box { width: 100%; max-width: 420px; }
+        .logo { text-align: center; margin-bottom: 35px; }
+        .logo-icon { font-size: 50px; margin-bottom: 10px; display: block; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
         .logo h1 {
-            font-size: 32px;
-            font-weight: 800;
+            font-size: 32px; font-weight: 800;
             background: linear-gradient(135deg, #6c63ff, #11998e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .logo p { color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 5px; }
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-            color: rgba(255,255,255,0.5);
-            font-size: 14px;
-        }
-        .register-link a {
-            color: #6c63ff;
-            text-decoration: none;
-            font-weight: 700;
-        }
+        .register-link { text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); font-size: 14px; }
+        .register-link a { color: #6c63ff; text-decoration: none; font-weight: 700; }
         label { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 5px; display: block; font-weight: 600; }
+
+        /* بانر لو جاي من QR */
+        .qr-banner {
+            background: rgba(108,99,255,0.15);
+            border: 1px solid rgba(108,99,255,0.3);
+            border-radius: 12px; padding: 12px 16px;
+            margin-bottom: 20px; text-align: center;
+            color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.5;
+        }
+        .qr-banner strong { color: #6c63ff; }
     </style>
 </head>
 <body>
@@ -59,7 +41,13 @@
         <div class="logo">
             <span class="logo-icon">📚</span>
             <h1>سنتر</h1>
-            <p>سجل دخولك للمتابعة</p>
+            <p id="logo-sub">سجل دخولك للمتابعة</p>
+        </div>
+
+        <!-- بانر يظهر لو الطالب جاي من رابط QR -->
+        <div class="qr-banner" id="qr-banner" style="display:none">
+            <strong>📱 صورت QR الحصة!</strong><br>
+            سجل دخولك الأول عشان يتسجل حضورك أوتوماتيك
         </div>
 
         <div class="card">
@@ -76,7 +64,7 @@
         </div>
 
         <div class="register-link">
-            مش مسجل؟ <a href="index.html">سجل دلوقتي</a>
+            مش مسجل؟ <a href="index.html" id="register-link">سجل دلوقتي</a>
         </div>
     </div>
 
@@ -96,6 +84,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // لو جاي من رابط QR اعرض البانر
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get('redirect');
+        if (redirectUrl && redirectUrl.includes('scan.html')) {
+            document.getElementById('qr-banner').style.display = 'block';
+            document.getElementById('logo-sub').textContent = 'سجل دخولك عشان تسجل حضورك';
+            // خلي رابط التسجيل يحتفظ بالـ redirect
+            document.getElementById('register-link').href = 'index.html';
+        }
+
         window.login = async function() {
             const phone = document.getElementById('phone').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -112,6 +110,13 @@
             btn.textContent = 'جاري الدخول...';
 
             try {
+                // تحقق من المدرس أولاً
+                if (phone === '01000000000' && password === 'admin123') {
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    window.location.href = 'admin.html';
+                    return;
+                }
+
                 const q = query(collection(db, 'students'), where('phone', '==', phone), where('password', '==', password));
                 const result = await getDocs(q);
 
@@ -133,11 +138,27 @@
                     return;
                 }
 
+                if (student.status === 'rejected') {
+                    msg.className = 'msg msg-error';
+                    msg.textContent = '❌ تم رفض حسابك. تواصل مع المدرس';
+                    btn.disabled = false;
+                    btn.textContent = 'دخول 🚀';
+                    return;
+                }
+
                 if (student.status === 'approved') {
                     localStorage.setItem('student', JSON.stringify({ id: result.docs[0].id, ...student }));
                     msg.className = 'msg msg-success';
                     msg.textContent = '✅ أهلاً ' + student.name + '!';
-                    setTimeout(() => window.location.href = 'student.html', 1000);
+
+                    setTimeout(() => {
+                        // لو جاي من رابط QR ارجعله عليه
+                        if (redirectUrl) {
+                            window.location.href = decodeURIComponent(redirectUrl);
+                        } else {
+                            window.location.href = 'student.html';
+                        }
+                    }, 800);
                 }
 
             } catch (error) {
