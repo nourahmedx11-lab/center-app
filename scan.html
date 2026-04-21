@@ -4,59 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سنتر - تسجيل الحضور</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        h1 { color: #667eea; font-size: 24px; margin-bottom: 10px; }
-        p { color: #888; font-size: 14px; margin-bottom: 20px; }
-        #reader {
-            width: 100%;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        .msg { padding: 15px; border-radius: 10px; margin-top: 15px; font-size: 15px; font-weight: 600; }
-        .msg.success { background: #e8f5e9; color: #2e7d32; }
-        .msg.error { background: #ffebee; color: #c62828; }
-        .msg.warning { background: #fff8e1; color: #f57f17; }
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            margin-top: 10px;
-        }
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .scan-box { width: 100%; max-width: 420px; text-align: center; }
+        #reader { width: 100%; border-radius: 15px; overflow: hidden; margin-bottom: 20px; }
+        .scan-title { font-size: 24px; font-weight: 800; color: #6c63ff; margin-bottom: 10px; }
+        .scan-sub { color: #888; font-size: 14px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>📱 تسجيل الحضور</h1>
-        <p>وجّه الكاميرا على QR Code الحصة</p>
-        <div id="reader"></div>
-        <div id="msg"></div>
+    <div class="scan-box">
+        <div class="card">
+            <div class="scan-title">📱 تسجيل الحضور</div>
+            <div class="scan-sub">وجّه الكاميرا على QR Code الحصة</div>
+            <div id="reader"></div>
+            <div id="msg"></div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/html5-qrcode"></script>
@@ -75,22 +39,18 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-
         const student = JSON.parse(localStorage.getItem('student'));
         if (!student) window.location.href = 'login.html';
 
-        // إحداثيات السنتر (هنحددها بعدين)
         const CENTER_LAT = 30.0444;
         const CENTER_LNG = 31.2357;
-        const MAX_DISTANCE = 200; // متر
+        const MAX_DISTANCE = 500;
 
         function getDistance(lat1, lng1, lat2, lng2) {
             const R = 6371000;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLng = (lng2 - lng1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
-                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLng/2) * Math.sin(dLng/2);
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
 
@@ -100,59 +60,49 @@
             scanner.clear();
             const msg = document.getElementById('msg');
 
-            // التحقق من الكود
             if (!code.startsWith('SESSION-')) {
-                msg.className = 'msg error';
+                msg.className = 'msg msg-error';
                 msg.textContent = '❌ QR Code غلط!';
                 return;
             }
 
-            msg.className = 'msg warning';
+            msg.className = 'msg msg-warning';
             msg.textContent = '📍 جاري التحقق من موقعك...';
 
-            // التحقق من الموقع
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 const dist = getDistance(pos.coords.latitude, pos.coords.longitude, CENTER_LAT, CENTER_LNG);
 
                 if (dist > MAX_DISTANCE) {
-                    msg.className = 'msg error';
+                    msg.className = 'msg msg-error';
                     msg.textContent = `❌ أنت بعيد عن السنتر (${Math.round(dist)} متر)`;
+                    await addDoc(collection(db, 'cheatAttempts'), {
+                        studentId: student.id, studentName: student.name,
+                        distance: Math.round(dist), time: new Date().toISOString()
+                    });
                     return;
                 }
 
-                // استخراج session ID من الكود
-                const parts = code.split('-');
-                const sessionId = parts[1];
-
-                // التحقق إنه مسجلش قبل كده
-                const existing = await getDocs(query(
-                    collection(db, 'attendance'),
-                    where('sessionId', '==', sessionId),
-                    where('studentId', '==', student.id)
-                ));
+                const sessionId = code.replace('SESSION-', '');
+                const existing = await getDocs(query(collection(db, 'attendance'), where('sessionId', '==', sessionId), where('studentId', '==', student.id)));
 
                 if (!existing.empty) {
-                    msg.className = 'msg warning';
+                    msg.className = 'msg msg-warning';
                     msg.textContent = '⚠️ أنت سجلت حضورك قبل كده!';
                     return;
                 }
 
-                // تسجيل الحضور
                 await addDoc(collection(db, 'attendance'), {
-                    sessionId,
-                    studentId: student.id,
-                    studentName: student.name,
+                    sessionId, studentId: student.id, studentName: student.name,
                     time: new Date().toISOString(),
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude
+                    lat: pos.coords.latitude, lng: pos.coords.longitude
                 });
 
-                msg.className = 'msg success';
+                msg.className = 'msg msg-success';
                 msg.textContent = '✅ تم تسجيل حضورك بنجاح!';
 
             }, () => {
-                msg.className = 'msg error';
-                msg.textContent = '❌ مسمحتش بالموقع! لازم تسمح عشان تسجل حضورك';
+                msg.className = 'msg msg-error';
+                msg.textContent = '❌ لازم تسمح بالموقع عشان تسجل حضورك!';
             });
         });
     </script>
