@@ -152,6 +152,8 @@
     </div>
     <div class="nav">
       <div class="ni on" onclick="go('dash')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>الرئيسية</div>
+      <div class="ni" onclick="go('lec')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="2"/><path d="M6.5 6.5l3.5 2-3.5 2V6.5z"/></svg>المحاضرات</div>
+      <div class="ni" onclick="go('qa')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 10a1 1 0 01-1 1H5l-3 3V3a1 1 0 011-1h10a1 1 0 011 1v7z"/></svg>أسئلة الطلاب<span class="nbadge" id="nb-qa">0</span></div>
       <div class="ni" onclick="go('att')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 8l2 2 4-4"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg>الحضور<span class="nbadge" id="nb-att">3</span></div>
       <div class="ni" onclick="go('pay')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M1 7h14M4 11h3"/></svg>المدفوعات</div>
       <div class="ni" onclick="go('stu')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="3"/><path d="M1 14a5 5 0 0110 0"/><path d="M13 7v4M11 9h4"/></svg>الطلاب<span class="nbadge" id="nb-stu">2</span></div>
@@ -195,6 +197,38 @@
             <div class="ch"><span class="ct">مستوى الطلاب</span><span class="cl" onclick="go('grd')">تفاصيل ←</span></div>
             <div id="d-grades"></div>
           </div>
+        </div>
+      </div>
+
+      <!-- Lectures -->
+      <div class="sc" id="s-lec">
+        <div class="card">
+          <div class="ch"><span class="ct">📺 إضافة محاضرة جديدة</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">عنوان المحاضرة</label><input id="ltit" type="text" placeholder="مثال: الدرس الأول — المعادلات" style="width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none"></div>
+            <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">المادة</label><input id="lsub" type="text" placeholder="مثال: رياضيات" style="width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none"></div>
+          </div>
+          <div style="margin-bottom:12px"><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">رابط المحاضرة (YouTube / Drive / PDF)</label><input id="lurl" type="url" placeholder="https://..." style="width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none"></div>
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
+            <div style="flex:1"><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">النوع</label>
+            <select id="ltype" style="width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none">
+              <option value="video">🎬 فيديو</option><option value="pdf">📄 PDF</option><option value="audio">🎵 صوت</option>
+            </select></div>
+            <button onclick="addLec()" style="margin-top:18px;padding:9px 20px;background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:9px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer">إضافة ✅</button>
+          </div>
+          <div id="lmsg" style="font-size:12px;padding:4px 0"></div>
+        </div>
+        <div class="card last">
+          <div class="ch"><span class="ct">المحاضرات المضافة</span><span id="lcnt" style="font-size:11px;color:var(--mut)"></span></div>
+          <div id="llist"><div class="empty">جاري التحميل...</div></div>
+        </div>
+      </div>
+
+      <!-- QA -->
+      <div class="sc" id="s-qa">
+        <div class="card last">
+          <div class="ch"><span class="ct">💬 أسئلة الطلاب</span><span id="qa-cnt" style="font-size:11px;color:var(--mut)"></span></div>
+          <div id="qa-list"><div class="empty">جاري التحميل...</div></div>
         </div>
       </div>
 
@@ -254,7 +288,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, query, where, addDoc, deleteDoc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const cfg = {apiKey:"AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",authDomain:"center-app-30dc9.firebaseapp.com",projectId:"center-app-30dc9",storageBucket:"center-app-30dc9.firebasestorage.app",messagingSenderId:"407314952817",appId:"1:407314952817:web:fea2ab6f43e8250a34a1d0"};
 const app = initializeApp(cfg);
@@ -304,14 +338,89 @@ window.go=function(id){
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
   document.getElementById('s-'+id).classList.add('on');
-  const map={dash:0,att:1,pay:2,stu:3,grd:4,noti:5};
+  const map={dash:0,lec:1,qa:2,att:3,pay:4,stu:5,grd:6,noti:7};
   document.querySelectorAll('.ni')[map[id]]?.classList.add('on');
-  document.getElementById('ptitle').textContent=TITLES[id]||'';
+  document.getElementById('ptitle').textContent=({dash:'لوحة التحكم',lec:'المحاضرات',qa:'أسئلة الطلاب',att:'الحضور',pay:'المدفوعات',stu:'الطلاب',grd:'الاختبارات',noti:'التنبيهات'})[id]||'';
   if(id==='att')renderAtt();
   if(id==='pay')renderPay();
   if(id==='stu')renderStu();
   if(id==='grd')renderGrd();
   if(id==='noti')renderNoti();
+  if(id==='lec')loadLectures();
+  if(id==='qa')loadQA();
+}
+
+async function loadLectures(){
+  const el=document.getElementById('llist');
+  el.innerHTML='<div class="empty">جاري التحميل...</div>';
+  try{
+    const snap=await getDocs(query(collection(db,'lectures'),orderBy('createdAt','desc')));
+    document.getElementById('lcnt').textContent=snap.size+' محاضرة';
+    if(snap.empty){el.innerHTML='<div class="empty">لا توجد محاضرات بعد</div>';return;}
+    el.innerHTML='';
+    snap.forEach(d=>{
+      const l=d.data();const icon=l.type==='video'?'🎬':l.type==='pdf'?'📄':'🎵';
+      el.innerHTML+=`<div class="srow"><span style="font-size:20px;flex-shrink:0">${icon}</span><div class="sname">${l.title||'—'}<div class="smeta">${l.subject||''} · ${l.type}</div></div><a href="${l.url}" target="_blank" style="font-size:11px;color:var(--acc)">فتح</a><button onclick="delLec('${d.id}')" style="background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:6px;padding:4px 10px;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;margin-right:6px">حذف</button></div>`;
+    });
+  }catch(e){el.innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
+}
+
+window.addLec=async function(){
+  const tit=document.getElementById('ltit').value.trim();
+  const url=document.getElementById('lurl').value.trim();
+  const sub=document.getElementById('lsub').value.trim();
+  const type=document.getElementById('ltype').value;
+  const msg=document.getElementById('lmsg');
+  if(!tit||!url){msg.style.color='var(--red)';msg.textContent='❌ اكتب العنوان والرابط';return;}
+  try{
+    await addDoc(collection(db,'lectures'),{title:tit,url,subject:sub,type,createdAt:serverTimestamp()});
+    document.getElementById('ltit').value='';document.getElementById('lurl').value='';document.getElementById('lsub').value='';
+    msg.style.color='var(--grn)';msg.textContent='✅ تمت الإضافة!';
+    setTimeout(()=>msg.textContent='',3000);
+    loadLectures();
+  }catch(e){msg.style.color='var(--red)';msg.textContent='❌ حصل خطأ';}
+}
+
+window.delLec=async function(id){
+  if(!confirm('حذف المحاضرة؟'))return;
+  try{await deleteDoc(doc(db,'lectures',id));loadLectures();}catch(e){}
+}
+
+async function loadQA(){
+  const el=document.getElementById('qa-list');
+  el.innerHTML='<div class="empty">جاري التحميل...</div>';
+  try{
+    const snap=await getDocs(collection(db,'questions'));
+    const unanswered=snap.docs.filter(d=>!d.data().answer);
+    document.getElementById('qa-cnt').textContent=snap.size+' سؤال';
+    document.getElementById('nb-qa').textContent=unanswered.length;
+    if(snap.empty){el.innerHTML='<div class="empty">مفيش أسئلة لحد دلوقتي</div>';return;}
+    const sorted=snap.docs.sort((a,b)=>(b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0));
+    el.innerHTML='';
+    sorted.forEach(d=>{
+      const q=d.data();const ans=q.answer!=null;
+      el.innerHTML+=`
+        <div style="background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:14px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12px;font-weight:700;color:var(--acc)">${q.studentName||'—'}</span>
+            <span class="${ans?'badge bg':'badge ba'}">${ans?'تمت الإجابة':'في الانتظار'}</span>
+          </div>
+          <div style="font-size:13px;color:var(--txt);margin-bottom:10px;line-height:1.55">❓ ${q.question}</div>
+          ${ans?`<div style="font-size:12px;color:var(--grn);padding:8px 12px;background:rgba(52,211,153,.05);border-radius:8px;border-right:2px solid var(--grn)">💬 ${q.answer}</div>`:`
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <input id="ans-${d.id}" type="text" placeholder="اكتب إجابتك هنا..." style="flex:1;background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:7px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none">
+            <button onclick="answerQ('${d.id}')" style="padding:7px 14px;background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:8px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">إجابة</button>
+          </div>`}
+        </div>`;
+    });
+  }catch(e){el.innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
+}
+
+window.answerQ=async function(id){
+  const inp=document.getElementById('ans-'+id);
+  const ans=inp.value.trim();
+  if(!ans)return;
+  try{await updateDoc(doc(db,'questions',id),{answer:ans});loadQA();}catch(e){alert('حصل خطأ');}
 }
 
 function renderDash(){
