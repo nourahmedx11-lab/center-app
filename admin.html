@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        :root{--bg:#090910;--surf:#111118;--surf2:#1a1a26;--bord:rgba(255,255,255,0.07);--purple:#7c6fcd;--teal:#11998e;--acc:#a78bfa;--red:#f87171;--amb:#fbbf24;--grn:#34d399;--txt:#eeeef8;--mut:rgba(238,238,248,0.42)}
+        :root{--bg:#090910;--surf:#111118;--surf2:#1a1a26;--bord:rgba(255,255,255,0.07);--acc:#a78bfa;--teal:#11998e;--purple:#7c6fcd;--red:#f87171;--amb:#fbbf24;--grn:#34d399;--txt:#eeeef8;--mut:rgba(238,238,248,0.42)}
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
         body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,111,205,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,111,205,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
@@ -15,79 +15,69 @@
 
         /* Sidebar */
         .side{width:216px;flex-shrink:0;background:var(--surf);border-left:1px solid var(--bord);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
-        .side-logo{padding:22px 18px 18px;border-bottom:1px solid var(--bord)}
-        .logo-name{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--acc),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .logo-sub{font-size:10px;color:var(--mut);margin-top:2px}
-        .t-chip{margin:14px 10px;background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px}
-        .t-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-        .t-name{font-size:12px;font-weight:700}
-        .t-role{font-size:10px;color:var(--mut)}
+        .slogo{padding:22px 18px 18px;border-bottom:1px solid var(--bord)}
+        .lname{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--acc),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .lsub{font-size:10px;color:var(--mut);margin-top:2px}
+        .tchip{margin:14px 10px;background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+        .tav{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff}
+        .tnm{font-size:12px;font-weight:700}.trl{font-size:10px;color:var(--mut)}
         .nav{flex:1;padding:6px 0;overflow-y:auto}
-        .ni{display:flex;align-items:center;gap:9px;padding:9px 18px;font-size:13px;font-weight:600;color:var(--mut);cursor:pointer;transition:all .18s;border-right:3px solid transparent}
+        .ni{display:flex;align-items:center;gap:9px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--mut);cursor:pointer;transition:all .18s;border-right:3px solid transparent}
         .ni:hover{color:var(--txt);background:rgba(255,255,255,0.025)}
         .ni.on{color:var(--acc);border-right-color:var(--acc);background:rgba(124,111,205,0.07)}
-        .ni svg{width:16px;height:16px;opacity:.7;flex-shrink:0}
-        .ni.on svg{opacity:1}
+        .ni svg{width:16px;height:16px;opacity:.7;flex-shrink:0}.ni.on svg{opacity:1}
         .nbadge{margin-right:auto;background:var(--red);color:#fff;font-size:9px;font-weight:900;padding:1px 5px;border-radius:10px}
-        .side-foot{padding:14px 10px;border-top:1px solid var(--bord)}
-        .lout-btn{width:100%;padding:8px;background:transparent;border:1px solid var(--bord);border-radius:9px;color:var(--mut);font-family:'Cairo',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s}
-        .lout-btn:hover{border-color:var(--red);color:var(--red)}
+        .sfoot{padding:14px 10px;border-top:1px solid var(--bord)}
+        .lbtn{width:100%;padding:8px;background:transparent;border:1px solid var(--bord);border-radius:9px;color:var(--mut);font-family:'Cairo',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s}
+        .lbtn:hover{border-color:var(--red);color:var(--red)}
 
-        /* Main */
         .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-        .topbar{background:rgba(9,9,16,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bord);padding:0 26px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-        .tb-title{font-size:15px;font-weight:700}
-        .tb-sub{font-size:10px;color:var(--mut);margin-top:1px}
-        .open-btn{background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:9px;padding:8px 16px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .18s}
-        .open-btn:hover{opacity:.85}
-        .content{flex:1;overflow-y:auto;padding:22px 26px}
+        .topbar{background:rgba(9,9,16,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--bord);padding:0 22px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+        .tbt{font-size:15px;font-weight:700}.tbsub{font-size:10px;color:var(--mut);margin-top:1px}
+        .open-btn{background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:9px;padding:8px 16px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+
+        /* Grade selector bar */
+        .grade-bar{display:flex;gap:8px;padding:14px 22px 0;flex-shrink:0}
+        .gtab{flex:1;padding:10px;background:var(--surf2);border:1.5px solid var(--bord);border-radius:11px;text-align:center;cursor:pointer;transition:all .18s}
+        .gtab:hover{border-color:rgba(167,139,250,.35)}
+        .gtab.on{background:rgba(124,111,205,.12);border-color:var(--acc)}
+        .gtab-num{font-size:20px;font-weight:900;color:var(--mut)}
+        .gtab.on .gtab-num{color:var(--acc)}
+        .gtab-lbl{font-size:10px;color:var(--mut);margin-top:2px}
+        .gtab.on .gtab-lbl{color:var(--acc)}
+        .gtab-cnt{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:rgba(248,113,113,.12);color:var(--red);display:inline-block;margin-top:3px}
+
+        .content{flex:1;overflow-y:auto;padding:16px 22px 22px}
         .content::-webkit-scrollbar{width:3px}
         .content::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.07);border-radius:2px}
-
-        /* Screens */
-        .sc{display:none;animation:fi .28s ease}
-        .sc.on{display:block}
-        @keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+        .sc{display:none;animation:fi .25s ease}.sc.on{display:block}
+        @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
         /* Stats */
-        .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
-        .scard{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:16px;position:relative;overflow:hidden;transition:transform .18s,border-color .18s;animation:su .4s ease both}
-        .scard:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.11)}
+        .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:18px}
+        .scard{background:var(--surf);border:1px solid var(--bord);border-radius:13px;padding:15px;position:relative;overflow:hidden;animation:su .4s ease both}
+        @keyframes su{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
         .scard:nth-child(1){animation-delay:.04s}.scard:nth-child(2){animation-delay:.08s}.scard:nth-child(3){animation-delay:.12s}.scard:nth-child(4){animation-delay:.16s}
-        @keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-        .scard::before{content:'';position:absolute;top:-24px;left:-24px;width:70px;height:70px;border-radius:50%;opacity:.18;filter:blur(18px)}
+        .scard::before{content:'';position:absolute;top:-20px;left:-20px;width:60px;height:60px;border-radius:50%;opacity:.18;filter:blur(16px)}
         .scard.p::before{background:var(--purple)}.scard.t::before{background:var(--teal)}.scard.r::before{background:var(--red)}.scard.a::before{background:var(--amb)}
-        .snum{font-size:30px;font-weight:900;line-height:1}
+        .snum{font-size:28px;font-weight:900;line-height:1}
         .scard.p .snum{color:var(--acc)}.scard.t .snum{color:var(--grn)}.scard.r .snum{color:var(--red)}.scard.a .snum{color:var(--amb)}
-        .slabel{font-size:11px;color:var(--mut);margin-top:5px}
+        .slabel{font-size:11px;color:var(--mut);margin-top:4px}
 
-        /* 2-col grid */
-        .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-
-        /* Card */
-        .card{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:16px;margin-bottom:14px}
+        .g2{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+        .card{background:var(--surf);border:1px solid var(--bord);border-radius:13px;padding:15px;margin-bottom:13px}
         .card.last{margin-bottom:0}
-        .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+        .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
         .ct{font-size:13px;font-weight:700}
         .cl{font-size:11px;color:var(--acc);cursor:pointer}
-        .cl:hover{text-decoration:underline}
-
-        /* Rows */
-        .srow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--bord);transition:background .12s}
-        .srow:last-child{border-bottom:none}
-        .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-        .sname{font-size:12px;font-weight:600;flex:1}
-        .smeta{font-size:10px;color:var(--mut)}
-        .badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center}
-        .bg{background:rgba(52,211,153,.1);color:var(--grn)}.br{background:rgba(248,113,113,.1);color:var(--red)}.ba{background:rgba(251,191,36,.1);color:var(--amb)}.bp{background:rgba(167,139,250,.1);color:var(--acc)}.bm{background:rgba(255,255,255,.05);color:var(--mut)}
 
         /* Bars */
         .brow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
         .bname{font-size:11px;color:var(--mut);width:72px;text-align:right;flex-shrink:0}
         .btrack{flex:1;height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
-        .bfill{height:5px;border-radius:3px;transform-origin:right;animation:gb .6s ease forwards}
-        @keyframes gb{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-        .bval{font-size:11px;font-weight:700;min-width:26px}
+        .bfill{height:5px;border-radius:3px;animation:gb .6s ease forwards}
+        @keyframes gb{from{transform:scaleX(0);transform-origin:right}to{transform:scaleX(1)}}
+        .bval{font-size:11px;font-weight:700;min-width:24px}
 
         /* Progress */
         .prog{margin-bottom:12px}
@@ -96,16 +86,24 @@
         .pfill{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--teal));animation:gp .7s ease forwards}
         @keyframes gp{from{width:0!important}}
 
+        /* Rows */
+        .srow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bord)}
+        .srow:last-child{border-bottom:none}
+        .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+        .sname{font-size:12px;font-weight:600;flex:1}
+        .smeta{font-size:10px;color:var(--mut)}
+        .badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center}
+        .bg{background:rgba(52,211,153,.1);color:var(--grn)}.br{background:rgba(248,113,113,.1);color:var(--red)}.ba{background:rgba(251,191,36,.1);color:var(--amb)}.bp{background:rgba(167,139,250,.1);color:var(--acc)}.bm{background:rgba(255,255,255,.05);color:var(--mut)}
+
         /* Pay rows */
-        .prow{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--bord)}
+        .prow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bord)}
         .prow:last-child{border-bottom:none}
         .pname{font-size:12px;font-weight:600;flex:1}
-        .pamt{font-size:12px;font-weight:700;min-width:52px;text-align:left}
+        .pamt{font-size:12px;font-weight:700;min-width:50px;text-align:left}
 
         /* Attendance grid */
         .agrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:12px}
         .acell{border:1px solid var(--bord);border-radius:9px;padding:7px 3px;text-align:center;cursor:pointer;transition:all .12s;user-select:none}
-        .acell:hover{border-color:rgba(255,255,255,.13)}
         .acell.pr{background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.22)}
         .acell.ab{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.22)}
         .acell.la{background:rgba(251,191,36,.07);border-color:rgba(251,191,36,.22)}
@@ -113,68 +111,123 @@
         .acell.pr .asym{color:var(--grn)}.acell.ab .asym{color:var(--red)}.acell.la .asym{color:var(--amb)}
         .anm{font-size:9px;color:var(--txt);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-        /* Pending */
-        .pcard{display:flex;align-items:center;gap:9px;padding:11px;background:var(--surf2);border:1px solid var(--bord);border-radius:11px;margin-bottom:7px;transition:border-color .18s}
-        .pcard:hover{border-color:rgba(255,255,255,.1)}
+        /* Pending card */
+        .pcard{display:flex;align-items:center;gap:9px;padding:11px;background:var(--surf2);border:1px solid var(--bord);border-radius:11px;margin-bottom:7px}
         .abtns{display:flex;gap:5px;flex-shrink:0}
-        .bok{padding:6px 12px;background:rgba(52,211,153,.1);color:var(--grn);border:1px solid rgba(52,211,153,.22);border-radius:7px;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s}
-        .bok:hover{background:rgba(52,211,153,.18)}
-        .bno{padding:6px 12px;background:rgba(248,113,113,.07);color:var(--red);border:1px solid rgba(248,113,113,.18);border-radius:7px;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s}
-        .bno:hover{background:rgba(248,113,113,.14)}
+        .bok{padding:6px 12px;background:rgba(52,211,153,.1);color:var(--grn);border:1px solid rgba(52,211,153,.22);border-radius:7px;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer}
+        .bno{padding:6px 12px;background:rgba(248,113,113,.08);color:var(--red);border:1px solid rgba(248,113,113,.18);border-radius:7px;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer}
 
-        /* Notif */
+        /* Input fields */
+        .finp{width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:9px;padding:9px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none;transition:border-color .18s}
+        .finp:focus{border-color:rgba(167,139,250,.5)}
+        .finp::placeholder{color:var(--mut)}
+        .fselect{width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:9px;padding:9px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none;-webkit-appearance:none}
+        .fselect option{background:#1a1a26}
+
+        /* QA answer input */
+        .qa-ans-row{display:flex;gap:7px;margin-top:8px}
+        .qa-ans-inp{flex:1;background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:7px 11px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none}
+        .qa-send-btn{padding:7px 14px;background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:8px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+        .qa-item{background:var(--surf2);border:1px solid var(--bord);border-radius:11px;padding:13px;margin-bottom:9px}
+        .qa-item:last-child{margin-bottom:0}
+        .qa-asker{font-size:11px;font-weight:700;color:var(--acc);margin-bottom:5px}
+        .qa-q{font-size:13px;color:var(--txt);margin-bottom:6px;line-height:1.55}
+        .qa-ans-txt{font-size:12px;color:var(--grn);line-height:1.6;padding:9px 11px;background:rgba(52,211,153,.05);border-radius:8px;border-right:2px solid var(--grn)}
+
+        /* Notif rows */
         .nrow{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--bord)}
         .nrow:last-child{border-bottom:none}
         .ndot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
         .ntxt{font-size:12px;line-height:1.55;flex:1}
         .ntime{font-size:10px;color:var(--mut);margin-top:2px}
+        .wa-a{background:#25D366;color:#fff;border:none;border-radius:7px;padding:5px 10px;font-family:'Cairo',sans-serif;font-size:10px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;flex-shrink:0}
 
-        .empty{text-align:center;padding:26px;color:var(--mut);font-size:13px}
+        .empty{text-align:center;padding:24px;color:var(--mut);font-size:13px}
         .live{width:7px;height:7px;border-radius:50%;background:var(--grn);display:inline-block;animation:pd 2s ease-in-out infinite}
         @keyframes pd{0%,100%{opacity:1}50%{opacity:.4}}
 
-        .wa-a{background:#25D366;color:#fff;border:none;border-radius:7px;padding:5px 10px;font-family:'Cairo',sans-serif;font-size:10px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;flex-shrink:0}
+        /* Mobile */
+        .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bord);z-index:100;padding:6px 0 env(safe-area-inset-bottom,6px)}
+        .bn-items{display:flex;justify-content:space-around}
+        .bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;cursor:pointer;color:var(--mut);transition:color .15s;border:none;background:none;font-family:'Cairo',sans-serif;flex:1}
+        .bn-item.on{color:var(--acc)}
+        .bn-item svg{width:18px;height:18px}
+        .bn-label{font-size:9px;font-weight:600}
+        .mobile-header{display:none;background:rgba(9,9,16,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bord);padding:12px 16px;position:sticky;top:0;z-index:10;align-items:center;justify-content:space-between}
+        .mh-title{font-size:15px;font-weight:700}
 
-        @media(max-width:768px){.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
+        @media(max-width:768px){
+            .side{display:none}.topbar{display:none}
+            .mobile-header{display:flex}
+            .bottom-nav{display:block}
+            .content{padding:12px 14px 80px}
+            .stats{grid-template-columns:repeat(2,1fr)}
+            .g2{grid-template-columns:1fr}
+            .grade-bar{padding:12px 14px 0;gap:6px}
+        }
     </style>
 </head>
 <body>
 <div class="shell">
 
   <div class="side">
-    <div class="side-logo">
-      <div class="logo-name">مُدرِّسي</div>
-      <div class="logo-sub">لوحة التحكم الذكية</div>
-    </div>
-    <div class="t-chip">
-      <div class="t-av">مد</div>
-      <div><div class="t-name">أ. محمد</div><div class="t-role">رياضيات</div></div>
-    </div>
+    <div class="slogo"><div class="lname">مُدرِّسي</div><div class="lsub">لوحة التحكم</div></div>
+    <div class="tchip"><div class="tav">مد</div><div><div class="tnm">أ. محمد</div><div class="trl">رياضيات</div></div></div>
     <div class="nav">
-      <div class="ni on" onclick="go('dash')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>الرئيسية</div>
-      <div class="ni" onclick="go('lec')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="2"/><path d="M6.5 6.5l3.5 2-3.5 2V6.5z"/></svg>المحاضرات</div>
-      <div class="ni" onclick="go('qa')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 10a1 1 0 01-1 1H5l-3 3V3a1 1 0 011-1h10a1 1 0 011 1v7z"/></svg>أسئلة الطلاب<span class="nbadge" id="nb-qa">0</span></div>
-      <div class="ni" onclick="go('att')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 8l2 2 4-4"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg>الحضور<span class="nbadge" id="nb-att">3</span></div>
-      <div class="ni" onclick="go('pay')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M1 7h14M4 11h3"/></svg>المدفوعات</div>
-      <div class="ni" onclick="go('stu')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="3"/><path d="M1 14a5 5 0 0110 0"/><path d="M13 7v4M11 9h4"/></svg>الطلاب<span class="nbadge" id="nb-stu">2</span></div>
-      <div class="ni" onclick="go('grd')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V6L9 1z"/><path d="M9 1v5h4M5 9h6M5 12h4"/></svg>الاختبارات</div>
-      <div class="ni" onclick="go('noti')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1a5 5 0 015 5v3l1.5 2.5h-13L3 9V6a5 5 0 015-5z"/><path d="M6 13.5a2 2 0 004 0"/></svg>التنبيهات</div>
+      <div class="ni on" onclick="goSection('dash')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>الرئيسية</div>
+      <div class="ni" onclick="goSection('lec')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="2"/><path d="M6.5 6.5l3.5 2-3.5 2V6.5z"/></svg>المحاضرات</div>
+      <div class="ni" onclick="goSection('qa')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 10a1 1 0 01-1 1H5l-3 3V3a1 1 0 011-1h10a1 1 0 011 1v7z"/></svg>أسئلة الطلاب<span class="nbadge" id="nb-qa">0</span></div>
+      <div class="ni" onclick="goSection('att')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 8l2 2 4-4"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg>الحضور<span class="nbadge" id="nb-att">0</span></div>
+      <div class="ni" onclick="goSection('pay')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M1 7h14M4 11h3"/></svg>المدفوعات</div>
+      <div class="ni" onclick="goSection('receipts')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 1h8a1 1 0 011 1v12l-2-1.5L9 14l-2-1.5L5 14l-2 1.5V2a1 1 0 011-1z"/><path d="M6 5h4M6 8h4M6 11h2"/></svg>الإيصالات<span class="nbadge" id="nb-rec">0</span></div>
+      <div class="ni" onclick="goSection('stu')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="3"/><path d="M1 14a5 5 0 0110 0"/><path d="M13 7v4M11 9h4"/></svg>الطلاب<span class="nbadge" id="nb-stu">0</span></div>
+      <div class="ni" onclick="goSection('grd')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V6L9 1z"/><path d="M9 1v5h4M5 9h6M5 12h4"/></svg>الاختبارات</div>
       <div class="ni" onclick="window.location.href='session.html'"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6 5.5l5 2.5-5 2.5V5.5z"/></svg>فتح حصة</div>
     </div>
-    <div class="side-foot">
-      <button class="lout-btn" onclick="logout()">تسجيل خروج</button>
-    </div>
+    <div class="sfoot"><button class="lbtn" onclick="logout()">تسجيل خروج</button></div>
   </div>
 
   <div class="main">
+    <!-- Desktop topbar -->
     <div class="topbar">
-      <div><div class="tb-title" id="ptitle">لوحة التحكم</div><div class="tb-sub"><span class="live"></span> مباشر — الأحد 20 أبريل</div></div>
+      <div><div class="tbt" id="ptitle">لوحة التحكم</div><div class="tbsub"><span class="live"></span> مباشر</div></div>
       <button class="open-btn" onclick="window.location.href='session.html'">▶ فتح حصة</button>
     </div>
+    <!-- Mobile header -->
+    <div class="mobile-header">
+      <div><div class="mh-title" id="ptitle-m">لوحة التحكم</div><div style="font-size:10px;color:var(--mut)"><span class="live"></span> مباشر</div></div>
+      <button class="open-btn" onclick="window.location.href='session.html'" style="font-size:11px;padding:6px 12px">▶ فتح حصة</button>
+    </div>
+
+    <!-- Grade selector bar (shown in relevant sections) -->
+    <div class="grade-bar" id="grade-bar" style="display:none">
+      <div class="gtab on" id="gt1" onclick="selGrade(1)"><div class="gtab-num">١</div><div class="gtab-lbl">أول ثانوي</div><div class="gtab-cnt" id="gc1">0</div></div>
+      <div class="gtab" id="gt2" onclick="selGrade(2)"><div class="gtab-num">٢</div><div class="gtab-lbl">ثاني ثانوي</div><div class="gtab-cnt" id="gc2">0</div></div>
+      <div class="gtab" id="gt3" onclick="selGrade(3)"><div class="gtab-num">٣</div><div class="gtab-lbl">ثالث ثانوي</div><div class="gtab-cnt" id="gc3">0</div></div>
+    </div>
+
     <div class="content">
 
       <!-- Dashboard -->
       <div class="sc on" id="s-dash">
+        <!-- بطاقات الصفوف الثلاثة -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+          <div style="background:var(--surf);border:1.5px solid rgba(167,139,250,0.3);border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:all .18s" onclick="goSection('stu');selGrade(1)" onmouseover="this.style.borderColor='var(--acc)'" onmouseout="this.style.borderColor='rgba(167,139,250,0.3)'">
+            <div style="font-size:28px;font-weight:900;color:var(--acc)" id="g1-cnt">—</div>
+            <div style="font-size:11px;color:var(--mut);margin-top:4px">الأول الثانوي</div>
+            <div style="font-size:9px;color:var(--acc);margin-top:6px;background:rgba(167,139,250,.1);padding:2px 8px;border-radius:20px;display:inline-block">عرض ←</div>
+          </div>
+          <div style="background:var(--surf);border:1.5px solid rgba(52,211,153,0.3);border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:all .18s" onclick="goSection('stu');selGrade(2)" onmouseover="this.style.borderColor='var(--grn)'" onmouseout="this.style.borderColor='rgba(52,211,153,0.3)'">
+            <div style="font-size:28px;font-weight:900;color:var(--grn)" id="g2-cnt">—</div>
+            <div style="font-size:11px;color:var(--mut);margin-top:4px">الثاني الثانوي</div>
+            <div style="font-size:9px;color:var(--grn);margin-top:6px;background:rgba(52,211,153,.1);padding:2px 8px;border-radius:20px;display:inline-block">عرض ←</div>
+          </div>
+          <div style="background:var(--surf);border:1.5px solid rgba(251,191,36,0.3);border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:all .18s" onclick="goSection('stu');selGrade(3)" onmouseover="this.style.borderColor='var(--amb)'" onmouseout="this.style.borderColor='rgba(251,191,36,0.3)'">
+            <div style="font-size:28px;font-weight:900;color:var(--amb)" id="g3-cnt">—</div>
+            <div style="font-size:11px;color:var(--mut);margin-top:4px">الثالث الثانوي</div>
+            <div style="font-size:9px;color:var(--amb);margin-top:6px;background:rgba(251,191,36,.1);padding:2px 8px;border-radius:20px;display:inline-block">عرض ←</div>
+          </div>
+        </div>
         <div class="stats">
           <div class="scard p"><div class="snum" id="d-tot">—</div><div class="slabel">إجمالي الطلاب</div></div>
           <div class="scard t"><div class="snum" id="d-pre">—</div><div class="slabel">حضروا اليوم</div></div>
@@ -183,43 +236,37 @@
         </div>
         <div class="g2">
           <div>
-            <div class="card">
-              <div class="ch"><span class="ct">آخر غيابات</span><span class="cl" onclick="go('att')">الكل ←</span></div>
-              <div id="d-ablist"></div>
-            </div>
-            <div class="card last">
-              <div class="ch"><span class="ct">مستحقات مالية</span><span class="cl" onclick="go('pay')">الكل ←</span></div>
+            <div class="card"><div class="ch"><span class="ct">آخر غيابات</span><span class="cl" onclick="goSection('att')">الكل ←</span></div><div id="d-ablist"></div></div>
+            <div class="card last"><div class="ch"><span class="ct">مستحقات مالية</span><span class="cl" onclick="goSection('pay')">الكل ←</span></div>
               <div class="prog"><div class="plabel"><span>نسبة التحصيل</span><span id="dpct" style="color:var(--acc)">—%</span></div><div class="ptrack"><div class="pfill" id="dbar" style="width:0%"></div></div></div>
-              <div id="d-unplist"></div>
-            </div>
+              <div id="d-unplist"></div></div>
           </div>
-          <div class="card last">
-            <div class="ch"><span class="ct">مستوى الطلاب</span><span class="cl" onclick="go('grd')">تفاصيل ←</span></div>
-            <div id="d-grades"></div>
-          </div>
+          <div class="card last"><div class="ch"><span class="ct">مستوى الطلاب</span></div><div id="d-grades"></div></div>
         </div>
       </div>
 
       <!-- Lectures -->
       <div class="sc" id="s-lec">
         <div class="card">
-          <div class="ch"><span class="ct">📺 إضافة محاضرة جديدة</span></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-            <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">عنوان المحاضرة</label><input id="ltit" type="text" placeholder="مثال: الدرس الأول — المعادلات" style="width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none"></div>
-            <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">المادة</label><input id="lsub" type="text" placeholder="مثال: رياضيات" style="width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none"></div>
+          <div class="ch"><span class="ct">➕ إضافة محاضرة</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px">
+            <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">العنوان</label><input class="finp" id="ltit" type="text" placeholder="عنوان المحاضرة"></div>
+            <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">المادة</label><input class="finp" id="lsubj" type="text" placeholder="مثال: رياضيات"></div>
           </div>
-          <div style="margin-bottom:12px"><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">رابط المحاضرة (YouTube / Drive / PDF)</label><input id="lurl" type="url" placeholder="https://..." style="width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none"></div>
-          <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
-            <div style="flex:1"><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">النوع</label>
-            <select id="ltype" style="width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;padding:8px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none">
-              <option value="video">🎬 فيديو</option><option value="pdf">📄 PDF</option><option value="audio">🎵 صوت</option>
-            </select></div>
-            <button onclick="addLec()" style="margin-top:18px;padding:9px 20px;background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:9px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer">إضافة ✅</button>
+          <div style="margin-bottom:10px"><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">رابط المحاضرة</label><input class="finp" id="lurl" type="url" placeholder="https://youtube.com/..."></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:12px">
+            <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">النوع</label>
+              <select class="fselect" id="ltype"><option value="video">🎬 فيديو</option><option value="pdf">📄 PDF</option><option value="audio">🎵 صوت</option></select></div>
+            <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">للصف</label>
+              <select class="fselect" id="lgrade"><option value="0">الكل</option><option value="1">الأول</option><option value="2">الثاني</option><option value="3">الثالث</option></select></div>
+            <div style="display:flex;align-items:flex-end">
+              <button onclick="addLec()" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:9px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">إضافة ✅</button>
+            </div>
           </div>
-          <div id="lmsg" style="font-size:12px;padding:4px 0"></div>
+          <div id="lmsg" style="font-size:12px;padding:3px 0"></div>
         </div>
         <div class="card last">
-          <div class="ch"><span class="ct">المحاضرات المضافة</span><span id="lcnt" style="font-size:11px;color:var(--mut)"></span></div>
+          <div class="ch"><span class="ct">المحاضرات — <span id="lec-grade-label">الصف المختار</span></span><span id="lcnt" style="font-size:11px;color:var(--mut)"></span></div>
           <div id="llist"><div class="empty">جاري التحميل...</div></div>
         </div>
       </div>
@@ -227,7 +274,7 @@
       <!-- QA -->
       <div class="sc" id="s-qa">
         <div class="card last">
-          <div class="ch"><span class="ct">💬 أسئلة الطلاب</span><span id="qa-cnt" style="font-size:11px;color:var(--mut)"></span></div>
+          <div class="ch"><span class="ct">💬 أسئلة — <span id="qa-grade-label">الصف المختار</span></span><span id="qa-cnt" style="font-size:11px;color:var(--mut)"></span></div>
           <div id="qa-list"><div class="empty">جاري التحميل...</div></div>
         </div>
       </div>
@@ -239,14 +286,8 @@
           <div class="scard r"><div class="snum" id="aa">—</div><div class="slabel">غائب</div></div>
           <div class="scard a"><div class="snum" id="al">—</div><div class="slabel">متأخر</div></div>
         </div>
-        <div class="card">
-          <div class="ch"><span class="ct">تسجيل الحضور</span><span style="font-size:10px;color:var(--mut)">اضغط لتغيير الحالة</span></div>
-          <div class="agrid" id="agrid"></div>
-        </div>
-        <div class="card last">
-          <div class="ch"><span class="ct">الغايبين — إرسال تنبيه</span></div>
-          <div id="aabslist"></div>
-        </div>
+        <div class="card"><div class="ch"><span class="ct">تسجيل الحضور</span><span style="font-size:10px;color:var(--mut)">اضغط لتغيير</span></div><div class="agrid" id="agrid"></div></div>
+        <div class="card last"><div class="ch"><span class="ct">الغايبين</span></div><div id="aabslist"></div></div>
       </div>
 
       <!-- Payments -->
@@ -266,10 +307,10 @@
       <!-- Students -->
       <div class="sc" id="s-stu">
         <div class="card"><div class="ch"><span class="ct">⏳ بانتظار الموافقة</span></div><div id="pendlist"></div></div>
-        <div class="card last"><div class="ch"><span class="ct">✅ الطلاب المقبولون</span></div><div id="applist"></div></div>
+        <div class="card last"><div class="ch"><span class="ct">✅ الطلاب المقبولون — <span id="stu-grade-label">الكل</span></span></div><div id="applist"></div></div>
       </div>
 
-      <!-- Grades -->
+      <!-- Grades/Exams -->
       <div class="sc" id="s-grd">
         <div class="card last">
           <div class="ch"><span class="ct">نتائج الاختبارات</span><button class="open-btn" style="font-size:11px;padding:6px 12px" onclick="window.location.href='exam.html'">+ اختبار جديد</button></div>
@@ -277,12 +318,26 @@
         </div>
       </div>
 
-      <!-- Notifications -->
-      <div class="sc" id="s-noti">
-        <div class="card last"><div class="ch"><span class="ct">تنبيهات أولياء الأمور</span></div><div id="nlist"></div></div>
+      <!-- Receipts -->
+      <div class="sc" id="s-receipts">
+        <div class="card last">
+          <div class="ch"><span class="ct">🧾 إيصالات الدفع</span><span id="rec-cnt" style="font-size:11px;color:var(--mut)"></span></div>
+          <div id="rec-list"><div class="empty">جاري التحميل...</div></div>
+        </div>
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- Mobile Bottom Nav -->
+<div class="bottom-nav">
+  <div class="bn-items">
+    <button class="bn-item on" onclick="goSection('dash')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg><span class="bn-label">الرئيسية</span></button>
+    <button class="bn-item" onclick="goSection('lec')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="2"/><path d="M6.5 6.5l3.5 2-3.5 2V6.5z"/></svg><span class="bn-label">محاضرات</span></button>
+    <button class="bn-item" onclick="goSection('qa')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 10a1 1 0 01-1 1H5l-3 3V3a1 1 0 011-1h10a1 1 0 011 1v7z"/></svg><span class="bn-label">أسئلة</span></button>
+    <button class="bn-item" onclick="goSection('att')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 8l2 2 4-4"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg><span class="bn-label">الحضور</span></button>
+    <button class="bn-item" onclick="goSection('stu')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="3"/><path d="M1 14a5 5 0 0110 0"/></svg><span class="bn-label">الطلاب</span></button>
   </div>
 </div>
 
@@ -290,77 +345,142 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, updateDoc, query, where, addDoc, deleteDoc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-const cfg = {apiKey:"AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",authDomain:"center-app-30dc9.firebaseapp.com",projectId:"center-app-30dc9",storageBucket:"center-app-30dc9.firebasestorage.app",messagingSenderId:"407314952817",appId:"1:407314952817:web:fea2ab6f43e8250a34a1d0"};
-const app = initializeApp(cfg);
-const db = getFirestore(app);
+const cfg={apiKey:"AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",authDomain:"center-app-30dc9.firebaseapp.com",projectId:"center-app-30dc9",storageBucket:"center-app-30dc9.firebasestorage.app",messagingSenderId:"407314952817",appId:"1:407314952817:web:fea2ab6f43e8250a34a1d0"};
+const app=initializeApp(cfg); const db=getFirestore(app);
 
 const AVC=[['rgba(124,111,205,.18)','#a78bfa'],['rgba(17,153,142,.15)','#34d399'],['rgba(248,113,113,.15)','#f87171'],['rgba(251,191,36,.15)','#fbbf24'],['rgba(167,139,250,.12)','#c4b5fd']];
 function av(name,i){const[bg,c]=AVC[i%AVC.length];return `<div class="av" style="background:${bg};color:${c}">${name.slice(0,2)}</div>`}
 
-// بيانات حقيقية من Firebase
-let students=[], attendance=[], sessions=[];
+const GRADE_NAMES={1:'الأول الثانوي',2:'الثاني الثانوي',3:'الثالث الثانوي'};
+let currentGrade=1; // الصف المختار حالياً في التابات
+let currentSection='dash';
 
-async function loadFromFirebase(){
+let students=[], localAtt=[];
+const GRADES_MOCK=[{n:'أحمد علي',s:92},{n:'منة الله',s:85},{n:'رنا إبراهيم',s:79},{n:'نور علي',s:58},{n:'سارة محمود',s:44}];
+
+// ── Load from Firebase ───────────────────────────────────
+async function loadData(){
   try{
-    const [stuSnap,attSnap,sesSnap]=await Promise.all([
-      getDocs(collection(db,'students')),
-      getDocs(collection(db,'attendance')),
-      getDocs(collection(db,'sessions'))
-    ]);
-    students=stuSnap.docs.map(d=>({id:d.id,...d.data()}));
-    attendance=attSnap.docs.map(d=>({id:d.id,...d.data()}));
-    sessions=sesSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap=await getDocs(collection(db,'students'));
+    students=snap.docs.map(d=>({id:d.id,...d.data()}));
+    // بناء localAtt من الطلاب المقبولين
+    localAtt=students.filter(s=>s.status==='approved').map(s=>({sid:s.id,name:s.name,grade:s.grade||1,st:'pr'}));
   }catch(e){
-    console.warn('Firebase load failed, using mock data');
     students=[
-      {id:'s1',name:'أحمد علي',phone:'01001234567',parentPhone:'01001234560',status:'approved'},
-      {id:'s2',name:'منة الله سامي',phone:'01101234567',parentPhone:'01101234561',status:'approved'},
-      {id:'s3',name:'كريم أحمد',phone:'01201234567',parentPhone:'01201234562',status:'pending'},
-      {id:'s4',name:'نور علي',phone:'01001234568',parentPhone:'01001234563',status:'approved'},
-      {id:'s5',name:'سارة محمود',phone:'01101234568',parentPhone:'01101234564',status:'approved'},
-      {id:'s6',name:'رنا إبراهيم',phone:'01201234568',parentPhone:'01201234565',status:'pending'},
-      {id:'s7',name:'محمد حسن',phone:'01001234569',parentPhone:'01001234566',status:'approved'},
+      {id:'s1',name:'أحمد علي',phone:'01001',parentPhone:'01002',status:'approved',grade:1},
+      {id:'s2',name:'منة الله',phone:'01003',parentPhone:'01004',status:'approved',grade:1},
+      {id:'s3',name:'كريم أحمد',phone:'01005',parentPhone:'01006',status:'pending',grade:2},
+      {id:'s4',name:'نور علي',phone:'01007',parentPhone:'01008',status:'approved',grade:2},
+      {id:'s5',name:'سارة محمود',phone:'01009',parentPhone:'01010',status:'approved',grade:3},
+      {id:'s6',name:'رنا إبراهيم',phone:'01011',parentPhone:'01012',status:'pending',grade:1},
     ];
+    localAtt=students.filter(s=>s.status==='approved').map(s=>({sid:s.id,name:s.name,grade:s.grade||1,st:'pr'}));
   }
+  updateBadges();
+  renderDash();
 }
 
-// حضور محلي (mock للعرض)
-let localAtt=[
-  {sid:'s1',name:'أحمد علي',st:'pr'},{sid:'s2',name:'منة الله سامي',st:'pr'},
-  {sid:'s3',name:'كريم أحمد',st:'ab'},{sid:'s4',name:'نور علي',st:'la'},
-  {sid:'s5',name:'سارة محمود',st:'ab'},{sid:'s7',name:'محمد حسن',st:'pr'},
-  {sid:'s6',name:'رنا إبراهيم',st:'pr'},
-];
-const GRADES=[{n:'أحمد علي',s:92},{n:'منة الله',s:85},{n:'رنا إبراهيم',s:79},{n:'نور علي',s:58},{n:'سارة محمود',s:44}];
+function updateBadges(){
+  document.getElementById('nb-stu').textContent=students.filter(s=>s.status==='pending').length;
+  document.getElementById('nb-att').textContent=localAtt.filter(a=>a.st==='ab').length;
+}
 
-const TITLES={dash:'لوحة التحكم',att:'الحضور والغياب',pay:'المدفوعات',stu:'الطلاب',grd:'الاختبارات',noti:'التنبيهات'};
-window.go=function(id){
+// ── Grade selector ───────────────────────────────────────
+window.selGrade=function(g){
+  currentGrade=g;
+  [1,2,3].forEach(n=>{
+    document.getElementById('gt'+n).classList.toggle('on',n===g);
+  });
+  if(currentSection==='lec')loadLectures();
+  if(currentSection==='qa')loadQA();
+  if(currentSection==='stu')renderStu();
+  if(currentSection==='att')renderAtt();
+}
+
+const SECTIONS_WITH_GRADES=['lec','qa','stu','att'];
+const TITLES={dash:'لوحة التحكم',lec:'المحاضرات',qa:'أسئلة الطلاب',att:'الحضور',pay:'المدفوعات',receipts:'الإيصالات',stu:'الطلاب',grd:'الاختبارات'};
+
+window.goSection=function(id){
+  currentSection=id;
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.querySelectorAll('.ni,.bn-item').forEach(n=>n.classList.remove('on'));
   document.getElementById('s-'+id).classList.add('on');
-  const map={dash:0,lec:1,qa:2,att:3,pay:4,stu:5,grd:6,noti:7};
+  const map={dash:0,lec:1,qa:2,att:3,pay:4,receipts:5,stu:6,grd:7};
   document.querySelectorAll('.ni')[map[id]]?.classList.add('on');
-  document.getElementById('ptitle').textContent=({dash:'لوحة التحكم',lec:'المحاضرات',qa:'أسئلة الطلاب',att:'الحضور',pay:'المدفوعات',stu:'الطلاب',grd:'الاختبارات',noti:'التنبيهات'})[id]||'';
+  const bmap={dash:0,lec:1,qa:2,att:3,stu:4};
+  if(bmap[id]!==undefined)document.querySelectorAll('.bn-item')[bmap[id]]?.classList.add('on');
+  const t=TITLES[id]||'';
+  document.getElementById('ptitle').textContent=t;
+  document.getElementById('ptitle-m').textContent=t;
+  const bar=document.getElementById('grade-bar');
+  bar.style.display=SECTIONS_WITH_GRADES.includes(id)?'flex':'none';
+  if(id==='dash')renderDash();
+  if(id==='lec')loadLectures();
+  if(id==='qa')loadQA();
   if(id==='att')renderAtt();
   if(id==='pay')renderPay();
   if(id==='stu')renderStu();
   if(id==='grd')renderGrd();
-  if(id==='noti')renderNoti();
-  if(id==='lec')loadLectures();
-  if(id==='qa')loadQA();
+  if(id==='receipts')loadReceipts();
 }
 
+// ── Dashboard ─────────────────────────────────────────────
+function renderDash(){
+  const appr=students.filter(s=>s.status==='approved');
+  const pre=localAtt.filter(a=>a.st==='pr').length;
+  const abs=localAtt.filter(a=>a.st==='ab').length;
+  const unpaid=Math.max(0,appr.length-Math.round(appr.length*0.75));
+  const paid=appr.length-unpaid;
+  const pct=Math.round(paid/Math.max(appr.length,1)*100);
+  document.getElementById('d-tot').textContent=appr.length;
+  document.getElementById('d-pre').textContent=pre;
+  document.getElementById('d-abs').textContent=abs;
+  document.getElementById('d-unp').textContent=unpaid;
+  document.getElementById('dpct').textContent=pct+'%';
+  document.getElementById('dbar').style.width=pct+'%';
+  // عداد الصفوف الثلاثة في الكروت العلوية والتاب بار
+  [1,2,3].forEach(g=>{
+    const cnt=students.filter(s=>s.status==='approved'&&(s.grade||1)===g).length;
+    const gcEl=document.getElementById('gc'+g);
+    if(gcEl)gcEl.textContent=cnt;
+    const gdEl=document.getElementById('g'+g+'-cnt');
+    if(gdEl)gdEl.textContent=cnt;
+  });
+  const abl=document.getElementById('d-ablist');abl.innerHTML='';
+  localAtt.filter(a=>a.st!=='pr').slice(0,4).forEach((a,i)=>{
+    const b=a.st==='ab'?'<span class="badge br">غائب</span>':'<span class="badge ba">متأخر</span>';
+    abl.innerHTML+=`<div class="srow">${av(a.name,i)}<div class="sname">${a.name}</div>${b}</div>`;
+  });
+  if(!abl.innerHTML)abl.innerHTML='<div class="empty">🎉 الكل حضر!</div>';
+  const upl=document.getElementById('d-unplist');upl.innerHTML='';
+  appr.slice(0,unpaid).forEach((s,i)=>{
+    upl.innerHTML+=`<div class="prow">${av(s.name,i)}<div class="pname">${s.name}</div><div class="pamt" style="color:var(--red)">300 ج</div><span class="badge br">لم يسدد</span></div>`;
+  });
+  if(!upl.innerHTML)upl.innerHTML='<div class="empty">✅ الكل دفع!</div>';
+  const gl=document.getElementById('d-grades');gl.innerHTML='';
+  GRADES_MOCK.forEach(g=>{
+    const c=g.s>=75?'var(--grn)':g.s>=55?'var(--amb)':'var(--red)';
+    gl.innerHTML+=`<div class="brow"><div class="bname">${g.n}</div><div class="btrack"><div class="bfill" style="width:${g.s}%;background:${c}"></div></div><div class="bval" style="color:${c}">${g.s}</div></div>`;
+  });
+}
+
+// ── Lectures ──────────────────────────────────────────────
 async function loadLectures(){
   const el=document.getElementById('llist');
   el.innerHTML='<div class="empty">جاري التحميل...</div>';
+  const gname=GRADE_NAMES[currentGrade];
+  document.getElementById('lec-grade-label').textContent=gname;
   try{
     const snap=await getDocs(query(collection(db,'lectures'),orderBy('createdAt','desc')));
-    document.getElementById('lcnt').textContent=snap.size+' محاضرة';
-    if(snap.empty){el.innerHTML='<div class="empty">لا توجد محاضرات بعد</div>';return;}
+    // فلتر: محاضرات الصف ده أو للكل (grade===0)
+    const lecs=snap.docs.filter(d=>{const g=d.data().grade;return g===0||g===currentGrade;});
+    document.getElementById('lcnt').textContent=lecs.length+' محاضرة';
+    if(!lecs.length){el.innerHTML='<div class="empty">لا توجد محاضرات لهذا الصف بعد</div>';return;}
     el.innerHTML='';
-    snap.forEach(d=>{
+    lecs.forEach(d=>{
       const l=d.data();const icon=l.type==='video'?'🎬':l.type==='pdf'?'📄':'🎵';
-      el.innerHTML+=`<div class="srow"><span style="font-size:20px;flex-shrink:0">${icon}</span><div class="sname">${l.title||'—'}<div class="smeta">${l.subject||''} · ${l.type}</div></div><a href="${l.url}" target="_blank" style="font-size:11px;color:var(--acc)">فتح</a><button onclick="delLec('${d.id}')" style="background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:6px;padding:4px 10px;font-family:'Cairo',sans-serif;font-size:11px;cursor:pointer;margin-right:6px">حذف</button></div>`;
+      const g=l.grade===0?'الكل':GRADE_NAMES[l.grade]||'—';
+      el.innerHTML+=`<div class="srow"><span style="font-size:18px;flex-shrink:0">${icon}</span><div class="sname">${l.title||'—'}<div class="smeta">${l.subject||''} · ${g}</div></div><a href="${l.url}" target="_blank" style="font-size:11px;color:var(--acc);margin-left:8px">فتح</a><button onclick="delLec('${d.id}')" style="background:rgba(248,113,113,.1);color:var(--red);border:none;border-radius:6px;padding:3px 8px;font-family:'Cairo',sans-serif;font-size:10px;cursor:pointer;margin-right:4px">حذف</button></div>`;
     });
   }catch(e){el.innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
 }
@@ -368,17 +488,18 @@ async function loadLectures(){
 window.addLec=async function(){
   const tit=document.getElementById('ltit').value.trim();
   const url=document.getElementById('lurl').value.trim();
-  const sub=document.getElementById('lsub').value.trim();
+  const subj=document.getElementById('lsubj').value.trim();
   const type=document.getElementById('ltype').value;
+  const grade=parseInt(document.getElementById('lgrade').value);
   const msg=document.getElementById('lmsg');
   if(!tit||!url){msg.style.color='var(--red)';msg.textContent='❌ اكتب العنوان والرابط';return;}
   try{
-    await addDoc(collection(db,'lectures'),{title:tit,url,subject:sub,type,createdAt:serverTimestamp()});
-    document.getElementById('ltit').value='';document.getElementById('lurl').value='';document.getElementById('lsub').value='';
+    await addDoc(collection(db,'lectures'),{title:tit,url,subject:subj,type,grade,createdAt:serverTimestamp()});
+    document.getElementById('ltit').value='';document.getElementById('lurl').value='';document.getElementById('lsubj').value='';
     msg.style.color='var(--grn)';msg.textContent='✅ تمت الإضافة!';
     setTimeout(()=>msg.textContent='',3000);
     loadLectures();
-  }catch(e){msg.style.color='var(--red)';msg.textContent='❌ حصل خطأ';}
+  }catch(e){msg.style.color='var(--red)';msg.textContent='❌ حصل خطأ: '+e.message;}
 }
 
 window.delLec=async function(id){
@@ -386,107 +507,64 @@ window.delLec=async function(id){
   try{await deleteDoc(doc(db,'lectures',id));loadLectures();}catch(e){}
 }
 
+// ── QA ────────────────────────────────────────────────────
 async function loadQA(){
   const el=document.getElementById('qa-list');
   el.innerHTML='<div class="empty">جاري التحميل...</div>';
+  const gname=GRADE_NAMES[currentGrade];
+  document.getElementById('qa-grade-label').textContent=gname;
   try{
-    const snap=await getDocs(collection(db,'questions'));
-    const unanswered=snap.docs.filter(d=>!d.data().answer);
-    document.getElementById('qa-cnt').textContent=snap.size+' سؤال';
-    document.getElementById('nb-qa').textContent=unanswered.length;
-    if(snap.empty){el.innerHTML='<div class="empty">مفيش أسئلة لحد دلوقتي</div>';return;}
+    const snap=await getDocs(query(collection(db,'questions'),where('grade','==',currentGrade)));
+    const unanswered=snap.docs.filter(d=>!d.data().answer).length;
+    document.getElementById('qa-cnt').textContent=snap.size+' سؤال، '+unanswered+' بدون رد';
+    document.getElementById('nb-qa').textContent=unanswered;
+    if(snap.empty){el.innerHTML='<div class="empty">مفيش أسئلة من طلاب '+gname+' لحد دلوقتي</div>';return;}
     const sorted=snap.docs.sort((a,b)=>(b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0));
     el.innerHTML='';
     sorted.forEach(d=>{
       const q=d.data();const ans=q.answer!=null;
       el.innerHTML+=`
-        <div style="background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:14px;margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-size:12px;font-weight:700;color:var(--acc)">${q.studentName||'—'}</span>
-            <span class="${ans?'badge bg':'badge ba'}">${ans?'تمت الإجابة':'في الانتظار'}</span>
-          </div>
-          <div style="font-size:13px;color:var(--txt);margin-bottom:10px;line-height:1.55">❓ ${q.question}</div>
-          ${ans?`<div style="font-size:12px;color:var(--grn);padding:8px 12px;background:rgba(52,211,153,.05);border-radius:8px;border-right:2px solid var(--grn)">💬 ${q.answer}</div>`:`
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <input id="ans-${d.id}" type="text" placeholder="اكتب إجابتك هنا..." style="flex:1;background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:7px 12px;font-family:'Cairo',sans-serif;font-size:12px;color:var(--txt);outline:none">
-            <button onclick="answerQ('${d.id}')" style="padding:7px 14px;background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:8px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">إجابة</button>
-          </div>`}
+        <div class="qa-item">
+          <div class="qa-asker">${q.studentName||'—'} <span style="font-size:10px;color:var(--mut);font-weight:400">· ${GRADE_NAMES[q.grade]||''}</span></div>
+          <div class="qa-q">❓ ${q.question}</div>
+          ${ans
+            ?`<div class="qa-ans-txt">💬 ${q.answer}</div>`
+            :`<div class="qa-ans-row"><input class="qa-ans-inp" id="ai-${d.id}" type="text" placeholder="اكتب إجابتك هنا..."><button class="qa-send-btn" onclick="ansQ('${d.id}')">إجابة</button></div>`
+          }
         </div>`;
     });
   }catch(e){el.innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
 }
 
-window.answerQ=async function(id){
-  const inp=document.getElementById('ans-'+id);
-  const ans=inp.value.trim();
-  if(!ans)return;
+window.ansQ=async function(id){
+  const inp=document.getElementById('ai-'+id);
+  const ans=inp?.value.trim();if(!ans)return;
   try{await updateDoc(doc(db,'questions',id),{answer:ans});loadQA();}catch(e){alert('حصل خطأ');}
 }
 
-function renderDash(){
-  const appr=students.filter(s=>s.status==='approved');
-  const pre=localAtt.filter(a=>a.st==='pr').length;
-  const abs=localAtt.filter(a=>a.st==='ab').length;
-  // نحسب المدفوعين من receipts لو موجودة، أو نعرض mock
-  const unpaid=Math.max(0,appr.length-Math.round(appr.length*0.75));
-  const paid=appr.length-unpaid;
-  const pct=Math.round(paid/Math.max(appr.length,1)*100);
-
-  document.getElementById('d-tot').textContent=appr.length;
-  document.getElementById('d-pre').textContent=pre;
-  document.getElementById('d-abs').textContent=abs;
-  document.getElementById('d-unp').textContent=unpaid;
-  document.getElementById('nb-att').textContent=abs;
-  document.getElementById('nb-stu').textContent=students.filter(s=>s.status==='pending').length;
-
-  document.getElementById('dpct').textContent=pct+'%';
-  document.getElementById('dbar').style.width=pct+'%';
-
-  const abl=document.getElementById('d-ablist');
-  abl.innerHTML='';
-  localAtt.filter(a=>a.st!=='pr').forEach((a,i)=>{
-    const b=a.st==='ab'?`<span class="badge br">غائب</span>`:`<span class="badge ba">متأخر</span>`;
-    abl.innerHTML+=`<div class="srow">${av(a.name,i)}<div class="sname">${a.name}</div>${b}</div>`;
-  });
-  if(!abl.innerHTML)abl.innerHTML='<div class="empty">🎉 الكل حضر!</div>';
-
-  const upl=document.getElementById('d-unplist');
-  upl.innerHTML='';
-  appr.slice(0,unpaid).forEach((s,i)=>{
-    upl.innerHTML+=`<div class="prow">${av(s.name,i)}<div class="pname">${s.name}</div><div class="pamt" style="color:var(--red)">300 ج</div><span class="badge br">لم يسدد</span></div>`;
-  });
-  if(!upl.innerHTML)upl.innerHTML='<div class="empty">✅ الكل دفع!</div>';
-
-  const gl=document.getElementById('d-grades');
-  gl.innerHTML='';
-  GRADES.forEach(g=>{
-    const c=g.s>=75?'var(--grn)':g.s>=55?'var(--amb)':'var(--red)';
-    gl.innerHTML+=`<div class="brow"><div class="bname">${g.n}</div><div class="btrack"><div class="bfill" style="width:${g.s}%;background:${c}"></div></div><div class="bval" style="color:${c}">${g.s}</div></div>`;
-  });
-}
-
+// ── Attendance ────────────────────────────────────────────
 function renderAtt(){
-  const p=localAtt.filter(a=>a.st==='pr').length;
-  const ab=localAtt.filter(a=>a.st==='ab').length;
-  const l=localAtt.filter(a=>a.st==='la').length;
+  const filtered=localAtt.filter(a=>(a.grade||1)===currentGrade);
+  const p=filtered.filter(a=>a.st==='pr').length;
+  const ab=filtered.filter(a=>a.st==='ab').length;
+  const l=filtered.filter(a=>a.st==='la').length;
   document.getElementById('ap').textContent=p;
   document.getElementById('aa').textContent=ab;
   document.getElementById('al').textContent=l;
-  const g=document.getElementById('agrid');
-  g.innerHTML='';
+  document.getElementById('nb-att').textContent=localAtt.filter(a=>a.st==='ab').length;
+  const g=document.getElementById('agrid');g.innerHTML='';
   const syms={pr:'✓',ab:'✗',la:'◑'};
-  const lbs={pr:'حاضر',ab:'غائب',la:'متأخر'};
-  localAtt.forEach((a,i)=>{
-    g.innerHTML+=`<div class="acell ${a.st}" onclick="cycleAtt(${i})" id="ac${i}"><div class="asym">${syms[a.st]}</div><div class="anm">${a.name}</div></div>`;
+  filtered.forEach((a,i)=>{
+    const gi=localAtt.indexOf(a);
+    g.innerHTML+=`<div class="acell ${a.st}" onclick="cycleAtt(${gi})"><div class="asym">${syms[a.st]}</div><div class="anm">${a.name}</div></div>`;
   });
-  const abl=document.getElementById('aabslist');
-  abl.innerHTML='';
-  const absent=localAtt.filter(a=>a.st!=='pr');
+  const abl=document.getElementById('aabslist');abl.innerHTML='';
+  const absent=filtered.filter(a=>a.st!=='pr');
   absent.forEach((a,i)=>{
     const stu=students.find(s=>s.id===a.sid)||{};
     const phone=(stu.parentPhone||'').replace(/^0/,'20').replace(/\D/g,'');
-    const msg=encodeURIComponent(`عزيزي ولي أمر ${a.name}، نفيدكم بأن ${a.name} ${a.st==='ab'?'لم يحضر':'تأخر في'} حصة اليوم.`);
-    const badge=a.st==='ab'?`<span class="badge br">غائب</span>`:`<span class="badge ba">متأخر</span>`;
+    const msg=encodeURIComponent(`عزيزي ولي أمر ${a.name}، ${a.name} ${a.st==='ab'?'لم يحضر':'تأخر في'} حصة اليوم.`);
+    const badge=a.st==='ab'?'<span class="badge br">غائب</span>':'<span class="badge ba">متأخر</span>';
     abl.innerHTML+=`<div class="srow">${av(a.name,i)}<div class="sname">${a.name}<div class="smeta">${stu.parentPhone||''}</div></div>${badge}<a class="wa-a" href="https://wa.me/${phone}?text=${msg}" target="_blank">واتساب</a></div>`;
   });
   if(!absent.length)abl.innerHTML='<div class="empty">🎉 الكل حضر اليوم!</div>';
@@ -494,78 +572,116 @@ function renderAtt(){
 window.cycleAtt=function(i){
   const o=['pr','ab','la'];
   localAtt[i].st=o[(o.indexOf(localAtt[i].st)+1)%3];
-  renderAtt();
+  renderAtt();updateBadges();
 }
 
+// ── Payments ──────────────────────────────────────────────
 function renderPay(){
   const appr=students.filter(s=>s.status==='approved');
-  const cnt=appr.length;
-  const paidN=Math.round(cnt*0.75);
-  const unpaidN=cnt-paidN;
-  const pct=Math.round(paidN/Math.max(cnt,1)*100);
+  const paidN=Math.round(appr.length*0.75);
+  const unpaidN=appr.length-paidN;
+  const pct=Math.round(paidN/Math.max(appr.length,1)*100);
   document.getElementById('pc').textContent=(paidN*300).toLocaleString();
   document.getElementById('pp').textContent=(unpaidN*300).toLocaleString();
   document.getElementById('pn').textContent=unpaidN;
   document.getElementById('ppct').textContent=pct+'%';
   document.getElementById('pbar').style.width=pct+'%';
-  const el=document.getElementById('plist');
-  el.innerHTML='';
+  const el=document.getElementById('plist');el.innerHTML='';
   appr.forEach((s,i)=>{
     const paid=i<paidN;
-    const badge=paid?`<span class="badge bg">مسدد</span>`:`<span class="badge br">لم يسدد</span>`;
+    const badge=paid?'<span class="badge bg">مسدد</span>':'<span class="badge br">لم يسدد</span>';
     const amt=paid?`<div class="pamt" style="color:var(--grn)">300 ج</div>`:`<div class="pamt" style="color:var(--red)">0 ج</div>`;
-    el.innerHTML+=`<div class="prow">${av(s.name,i)}<div class="pname">${s.name}</div>${amt}${badge}</div>`;
+    el.innerHTML+=`<div class="prow">${av(s.name,i)}<div class="pname">${s.name}<div class="smeta">${GRADE_NAMES[s.grade||1]}</div></div>${amt}${badge}</div>`;
   });
 }
 
+// ── Students ──────────────────────────────────────────────
 function renderStu(){
   const pending=students.filter(s=>s.status==='pending');
-  const appr=students.filter(s=>s.status==='approved');
-  const pl=document.getElementById('pendlist');
-  pl.innerHTML='';
+  const appr=students.filter(s=>s.status==='approved'&&(s.grade||1)===currentGrade);
+  document.getElementById('stu-grade-label').textContent=GRADE_NAMES[currentGrade];
+  const pl=document.getElementById('pendlist');pl.innerHTML='';
   pending.forEach((s,i)=>{
-    pl.innerHTML+=`<div class="pcard">${av(s.name,i)}<div style="flex:1"><div style="font-size:13px;font-weight:700">${s.name}</div><div style="font-size:10px;color:var(--mut)">${s.phone} · ${s.parentPhone}</div></div><div class="abtns"><button class="bno" onclick="rejS('${s.id}')">رفض</button><button class="bok" onclick="appS('${s.id}')">قبول ✅</button></div></div>`;
+    pl.innerHTML+=`<div class="pcard">${av(s.name,i)}<div style="flex:1"><div style="font-size:13px;font-weight:700">${s.name}</div><div style="font-size:10px;color:var(--mut)">${s.phone} · ${GRADE_NAMES[s.grade||1]||'غير محدد'}</div></div><div class="abtns"><button class="bno" onclick="rejS('${s.id}')">رفض</button><button class="bok" onclick="appS('${s.id}')">قبول ✅</button></div></div>`;
   });
   if(!pending.length)pl.innerHTML='<div class="empty">مفيش طلاب في الانتظار 🎉</div>';
-  const al=document.getElementById('applist');
-  al.innerHTML='';
+  const al=document.getElementById('applist');al.innerHTML='';
   appr.forEach((s,i)=>{
     al.innerHTML+=`<div class="srow">${av(s.name,i)}<div class="sname">${s.name}<div class="smeta">${s.phone}</div></div><span class="badge bg">مقبول</span></div>`;
   });
+  if(!appr.length)al.innerHTML='<div class="empty">مفيش طلاب مقبولين في '+GRADE_NAMES[currentGrade]+' لسه</div>';
 }
 window.appS=async function(id){
   try{await updateDoc(doc(db,'students',id),{status:'approved'})}catch(e){}
   const s=students.find(x=>x.id===id);if(s)s.status='approved';
-  renderStu();document.getElementById('nb-stu').textContent=students.filter(s=>s.status==='pending').length;
+  renderStu();updateBadges();
 }
 window.rejS=async function(id){
   if(!confirm('تأكيد الرفض؟'))return;
   try{await updateDoc(doc(db,'students',id),{status:'rejected'})}catch(e){}
   const s=students.find(x=>x.id===id);if(s)s.status='rejected';
-  renderStu();
+  renderStu();updateBadges();
 }
 
+// ── Grades ────────────────────────────────────────────────
 function renderGrd(){
-  const el=document.getElementById('glist');
-  el.innerHTML='';
-  GRADES.forEach(g=>{
+  const el=document.getElementById('glist');el.innerHTML='';
+  GRADES_MOCK.forEach(g=>{
     const c=g.s>=75?'var(--grn)':g.s>=55?'var(--amb)':'var(--red)';
     const lb=g.s>=75?'<span class="badge bg">ممتاز</span>':g.s>=55?'<span class="badge ba">مقبول</span>':'<span class="badge br">ضعيف</span>';
-    el.innerHTML+=`<div class="srow"><div class="sname">${g.n}</div><div style="flex:2;padding:0 10px"><div class="btrack"><div class="bfill" style="width:${g.s}%;background:${c}"></div></div></div><div style="font-size:13px;font-weight:700;color:${c};min-width:50px;text-align:left">${g.s}/100</div>${lb}</div>`;
+    el.innerHTML+=`<div class="srow"><div style="flex:1;font-size:13px;font-weight:600">${g.n}</div><div style="flex:2;padding:0 10px"><div class="btrack"><div class="bfill" style="width:${g.s}%;background:${c}"></div></div></div><div style="font-size:14px;font-weight:900;color:${c};min-width:50px;text-align:left">${g.s}/100</div>${lb}</div>`;
   });
-}
-
-function renderNoti(){
-  document.getElementById('nlist').innerHTML=`
-    <div class="nrow"><div class="ndot" style="background:rgba(248,113,113,.12)"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M8 1a5 5 0 015 5v3l1.5 2.5h-13L3 9V6a5 5 0 015-5z"/><path d="M6 13.5a2 2 0 004 0"/></svg></div><div style="flex:1"><div class="ntxt">تنبيه غياب — <strong>كريم أحمد</strong>: أُرسل لولي الأمر</div><div class="ntime">منذ ساعتين · واتساب · <span style="color:var(--grn)">قُرأت</span></div></div><span class="badge bg">مُرسَل</span></div>
-    <div class="nrow"><div class="ndot" style="background:rgba(248,113,113,.12)"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M8 1a5 5 0 015 5v3l1.5 2.5h-13L3 9V6a5 5 0 015-5z"/><path d="M6 13.5a2 2 0 004 0"/></svg></div><div style="flex:1"><div class="ntxt">تنبيه غياب — <strong>سارة محمود</strong>: لم يحضر اليوم</div><div class="ntime">منذ ساعتين · واتساب · <span style="color:var(--amb)">لم يرد</span></div></div><span class="badge ba">لم يرد</span></div>
-    <div class="nrow"><div class="ndot" style="background:rgba(251,191,36,.1)"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--amb)" stroke-width="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M1 7h14"/></svg></div><div style="flex:1"><div class="ntxt">تذكير دفع — <strong>نور علي</strong>: مصروف أبريل 300 ج</div><div class="ntime">أمس · واتساب · <span style="color:var(--grn)">قُرأت</span></div></div><span class="badge bg">مُرسَل</span></div>`;
 }
 
 window.logout=function(){localStorage.removeItem('adminLoggedIn');window.location.href='login.html';}
 
-await loadFromFirebase();
-renderDash();
+// ── Receipts ──────────────────────────────────────────────
+async function loadReceipts(){
+  const el=document.getElementById('rec-list');
+  el.innerHTML='<div class="empty">جاري التحميل...</div>';
+  try{
+    const snap=await getDocs(collection(db,'receipts'));
+    const pending=snap.docs.filter(d=>d.data().status==='pending').length;
+    document.getElementById('rec-cnt').textContent=snap.size+' إيصال، '+pending+' في الانتظار';
+    document.getElementById('nb-rec').textContent=pending;
+    if(snap.empty){el.innerHTML='<div class="empty">مفيش إيصالات مرفوعة لحد دلوقتي</div>';return;}
+    const sorted=snap.docs.sort((a,b)=>(b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0));
+    el.innerHTML='';
+    const GNAMES={1:'أول ثانوي',2:'ثاني ثانوي',3:'ثالث ثانوي'};
+    sorted.forEach(d=>{
+      const r=d.data();
+      const badge=r.status==='confirmed'?'<span class="badge bg">✅ مؤكد</span>':r.status==='rejected'?'<span class="badge br">❌ مرفوض</span>':'<span class="badge ba">⏳ انتظار</span>';
+      const btns=r.status==='pending'?`
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button onclick="rejectRec('${d.id}')" style="flex:1;padding:7px;background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2);border-radius:8px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">رفض ❌</button>
+          <button onclick="confirmRec('${d.id}')" style="flex:1;padding:7px;background:rgba(52,211,153,.1);color:var(--grn);border:1px solid rgba(52,211,153,.2);border-radius:8px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">تأكيد ✅</button>
+        </div>`:'';
+      el.innerHTML+=`
+        <div style="background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:14px;margin-bottom:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div>
+              <div style="font-size:13px;font-weight:700">${r.studentName||'—'}</div>
+              <div style="font-size:10px;color:var(--mut)">${GNAMES[r.grade]||''} · ${r.month||''} · ${r.payMethod||'فودافون كاش'}</div>
+            </div>
+            ${badge}
+          </div>
+          ${r.image?`<img src="${r.image}" style="width:100%;border-radius:9px;max-height:220px;object-fit:contain;background:#000" alt="إيصال">`:''}
+          ${btns}
+        </div>`;
+    });
+  }catch(e){el.innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
+}
+
+window.confirmRec=async function(id){
+  if(!confirm('تأكيد الإيصال؟ سيُحتسب كمسدد للطالب'))return;
+  try{await updateDoc(doc(db,'receipts',id),{status:'confirmed'});loadReceipts();}catch(e){alert('حصل خطأ');}
+}
+window.rejectRec=async function(id){
+  if(!confirm('رفض الإيصال؟'))return;
+  try{await updateDoc(doc(db,'receipts',id),{status:'rejected'});loadReceipts();}catch(e){alert('حصل خطأ');}
+}
+
+loadData();
 </script>
 </body>
 </html>
