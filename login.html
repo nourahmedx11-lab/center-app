@@ -4,170 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سنتر - تسجيل دخول</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; padding: 20px;
-            background: radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f1a 70%);
-        }
-        .login-box { width: 100%; max-width: 420px; }
-        .logo { text-align: center; margin-bottom: 35px; }
-        .logo-icon { font-size: 50px; margin-bottom: 10px; display: block; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-        .logo h1 {
-            font-size: 32px; font-weight: 800;
-            background: linear-gradient(135deg, #6c63ff, #11998e);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .logo p { color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 5px; }
-        .register-link { text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); font-size: 14px; }
-        .register-link a { color: #6c63ff; text-decoration: none; font-weight: 700; }
-        label { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 5px; display: block; font-weight: 600; }
-
-        /* بانر لو جاي من QR */
-        .qr-banner {
-            background: rgba(108,99,255,0.15);
-            border: 1px solid rgba(108,99,255,0.3);
-            border-radius: 12px; padding: 12px 16px;
-            margin-bottom: 20px; text-align: center;
-            color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.5;
-        }
-        .qr-banner strong { color: #6c63ff; }
+        :root{--bg:#090910;--surf:#111118;--surf2:#1a1a26;--bord:rgba(255,255,255,0.08);--acc:#a78bfa;--teal:#11998e;--purple:#7c6fcd;--grn:#34d399;--red:#f87171;--amb:#fbbf24;--txt:#eeeef8;--mut:rgba(238,238,248,0.45)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,111,205,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,111,205,0.03) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+        .box{width:100%;max-width:420px;position:relative;z-index:1}
+        .logo{text-align:center;margin-bottom:28px}
+        .logo-icon{font-size:48px;display:block;margin-bottom:8px;animation:p 2s infinite}
+        @keyframes p{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+        .logo h1{font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--acc),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .logo p{color:var(--mut);font-size:13px;margin-top:4px}
+        .card{background:var(--surf);border:1px solid var(--bord);border-radius:16px;padding:24px}
+        .fg{margin-bottom:14px}
+        label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:5px}
+        input{width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:10px;padding:11px 14px;font-family:'Cairo',sans-serif;font-size:13px;color:var(--txt);outline:none;transition:border-color .2s}
+        input:focus{border-color:rgba(167,139,250,0.5)}
+        input::placeholder{color:var(--mut)}
+        .qr-banner{background:rgba(124,111,205,.1);border:1px solid rgba(124,111,205,.25);border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:12px;color:rgba(238,238,248,.75);text-align:center;line-height:1.6;display:none}
+        .qr-banner strong{color:var(--acc)}
+        .btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity .2s}
+        .btn:hover{opacity:.88}
+        .btn:disabled{opacity:.5;cursor:not-allowed}
+        .msg{margin-top:10px;font-size:12px;padding:9px 13px;border-radius:9px;display:none;line-height:1.5}
+        .msg.ok{background:rgba(52,211,153,.1);color:var(--grn);display:block}
+        .msg.err{background:rgba(248,113,113,.1);color:var(--red);display:block}
+        .msg.warn{background:rgba(251,191,36,.1);color:var(--amb);display:block}
+        .foot{text-align:center;margin-top:18px;font-size:13px;color:var(--mut)}
+        .foot a{color:var(--acc);text-decoration:none;font-weight:700}
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <div class="logo">
-            <span class="logo-icon">📚</span>
-            <h1>سنتر</h1>
-            <p id="logo-sub">سجل دخولك للمتابعة</p>
-        </div>
-
-        <!-- بانر يظهر لو الطالب جاي من رابط QR -->
-        <div class="qr-banner" id="qr-banner" style="display:none">
-            <strong>📱 صورت QR الحصة!</strong><br>
-            سجل دخولك الأول عشان يتسجل حضورك أوتوماتيك
-        </div>
-
-        <div class="card">
-            <div class="form-group">
-                <label>رقم الموبايل</label>
-                <input type="tel" id="phone" placeholder="01xxxxxxxxx">
-            </div>
-            <div class="form-group">
-                <label>كلمة المرور</label>
-                <input type="password" id="password" placeholder="كلمة المرور">
-            </div>
-            <button class="btn" id="loginBtn" onclick="login()">دخول 🚀</button>
-            <div id="msg"></div>
-        </div>
-
-        <div class="register-link">
-            مش مسجل؟ <a href="index.html" id="register-link">سجل دلوقتي</a>
-        </div>
+<div class="box">
+    <div class="logo"><span class="logo-icon">📚</span><h1>سنتر</h1><p id="lsub">سجل دخولك للمتابعة</p></div>
+    <div class="qr-banner" id="qrb"><strong>📱 صورت QR الحصة!</strong><br>سجل دخولك عشان يتسجل حضورك أوتوماتيك</div>
+    <div class="card">
+        <div class="fg"><label>رقم الموبايل</label><input type="tel" id="phone" placeholder="01xxxxxxxxx"></div>
+        <div class="fg"><label>كلمة المرور</label><input type="password" id="pwd" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')login()"></div>
+        <button class="btn" id="lb" onclick="login()">دخول 🚀</button>
+        <div class="msg" id="msg"></div>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
-            authDomain: "center-app-30dc9.firebaseapp.com",
-            projectId: "center-app-30dc9",
-            storageBucket: "center-app-30dc9.firebasestorage.app",
-            messagingSenderId: "407314952817",
-            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // لو جاي من رابط QR اعرض البانر
-        const params = new URLSearchParams(window.location.search);
-        const redirectUrl = params.get('redirect');
-        if (redirectUrl && redirectUrl.includes('scan.html')) {
-            document.getElementById('qr-banner').style.display = 'block';
-            document.getElementById('logo-sub').textContent = 'سجل دخولك عشان تسجل حضورك';
-            // خلي رابط التسجيل يحتفظ بالـ redirect
-            document.getElementById('register-link').href = 'index.html';
+    <div class="foot">مش مسجل؟ <a href="index.html">سجل دلوقتي</a></div>
+</div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import{getFirestore,collection,query,where,getDocs}from"https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",authDomain:"center-app-30dc9.firebaseapp.com",projectId:"center-app-30dc9",storageBucket:"center-app-30dc9.firebasestorage.app",messagingSenderId:"407314952817",appId:"1:407314952817:web:fea2ab6f43e8250a34a1d0"};
+const app=initializeApp(cfg);const db=getFirestore(app);
+async function hp(p){const e=new TextEncoder().encode(p);const b=await crypto.subtle.digest('SHA-256',e);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+const params=new URLSearchParams(window.location.search);
+const red=params.get('redirect');
+if(red&&red.includes('scan')){document.getElementById('qrb').style.display='block';document.getElementById('lsub').textContent='سجل دخولك عشان تسجل حضورك';}
+function sm(t,x){const e=document.getElementById('msg');e.className='msg '+t;e.textContent=x;}
+window.login=async function(){
+    const phone=document.getElementById('phone').value.trim();
+    const pwd=document.getElementById('pwd').value.trim();
+    const btn=document.getElementById('lb');
+    if(!phone||!pwd){sm('err','من فضلك ادخل الرقم وكلمة المرور');return;}
+    btn.disabled=true;btn.textContent='جاري الدخول...';
+    try{
+        const h=await hp(pwd);
+        // نجرب الكلمة المشفرة أول
+        let q=query(collection(db,'students'),where('phone','==',phone),where('password','==',h));
+        let r=await getDocs(q);
+        // fallback للحسابات القديمة
+        if(r.empty){q=query(collection(db,'students'),where('phone','==',phone),where('password','==',pwd));r=await getDocs(q);}
+        if(r.empty){sm('err','❌ رقم الموبايل أو كلمة المرور غلط');btn.disabled=false;btn.textContent='دخول 🚀';return;}
+        const s=r.docs[0].data();
+        if(s.status==='pending'){sm('warn','⏳ حسابك في انتظار موافقة المدرس');btn.disabled=false;btn.textContent='دخول 🚀';return;}
+        if(s.status==='rejected'){sm('err','❌ تم رفض حسابك. تواصل مع المدرس');btn.disabled=false;btn.textContent='دخول 🚀';return;}
+        if(s.status==='approved'){
+            localStorage.setItem('student',JSON.stringify({id:r.docs[0].id,...s}));
+            sm('ok','✅ أهلاً '+s.name.split(' ')[0]+'!');
+            setTimeout(()=>{if(red)window.location.href=decodeURIComponent(red);else window.location.href='student.html';},800);
         }
-
-        window.login = async function() {
-            const phone = document.getElementById('phone').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const btn = document.getElementById('loginBtn');
-            const msg = document.getElementById('msg');
-
-            if (!phone || !password) {
-                msg.className = 'msg msg-error';
-                msg.textContent = 'من فضلك ادخل الرقم وكلمة المرور';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.textContent = 'جاري الدخول...';
-
-            try {
-                // تحقق من المدرس أولاً
-                if (phone === '01000000000' && password === 'admin123') {
-                    localStorage.setItem('adminLoggedIn', 'true');
-                    window.location.href = 'admin.html';
-                    return;
-                }
-
-                const q = query(collection(db, 'students'), where('phone', '==', phone), where('password', '==', password));
-                const result = await getDocs(q);
-
-                if (result.empty) {
-                    msg.className = 'msg msg-error';
-                    msg.textContent = '❌ رقم الموبايل أو كلمة المرور غلط';
-                    btn.disabled = false;
-                    btn.textContent = 'دخول 🚀';
-                    return;
-                }
-
-                const student = result.docs[0].data();
-
-                if (student.status === 'pending') {
-                    msg.className = 'msg msg-warning';
-                    msg.textContent = '⏳ حسابك في انتظار موافقة المدرس';
-                    btn.disabled = false;
-                    btn.textContent = 'دخول 🚀';
-                    return;
-                }
-
-                if (student.status === 'rejected') {
-                    msg.className = 'msg msg-error';
-                    msg.textContent = '❌ تم رفض حسابك. تواصل مع المدرس';
-                    btn.disabled = false;
-                    btn.textContent = 'دخول 🚀';
-                    return;
-                }
-
-                if (student.status === 'approved') {
-                    localStorage.setItem('student', JSON.stringify({ id: result.docs[0].id, ...student }));
-                    msg.className = 'msg msg-success';
-                    msg.textContent = '✅ أهلاً ' + student.name + '!';
-
-                    setTimeout(() => {
-                        // لو جاي من رابط QR ارجعله عليه
-                        if (redirectUrl) {
-                            window.location.href = decodeURIComponent(redirectUrl);
-                        } else {
-                            window.location.href = 'student.html';
-                        }
-                    }, 800);
-                }
-
-            } catch (error) {
-                msg.className = 'msg msg-error';
-                msg.textContent = 'حصل خطأ، حاول تاني';
-                btn.disabled = false;
-                btn.textContent = 'دخول 🚀';
-            }
-        }
-    </script>
+    }catch(e){sm('err','حصل خطأ، حاول تاني');btn.disabled=false;btn.textContent='دخول 🚀';}
+}
+</script>
 </body>
 </html>
