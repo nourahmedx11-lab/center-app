@@ -4,308 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سنتر - تسجيل</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            background: radial-gradient(ellipse at top, #1a1a2e 0%, #0f0f1a 70%);
-        }
-        .register-box { width: 100%; max-width: 420px; }
-        .logo { text-align: center; margin-bottom: 30px; }
-        .logo-icon { font-size: 50px; margin-bottom: 10px; display: block; }
-        .logo h1 {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #6c63ff, #11998e);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .logo p { color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 5px; }
-        .login-link { text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); font-size: 14px; }
-        .login-link a { color: #6c63ff; text-decoration: none; font-weight: 700; }
-        label { color: rgba(255,255,255,0.7); font-size: 13px; margin-bottom: 5px; display: block; font-weight: 600; }
-
-        /* OTP step */
-        #step-otp { display: none; }
-        .otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 16px 0; }
-        .otp-inputs input {
-            width: 48px; height: 56px;
-            text-align: center; font-size: 22px; font-weight: 700;
-            background: rgba(255,255,255,0.07);
-            border: 1.5px solid rgba(255,255,255,0.15);
-            border-radius: 12px; color: #fff;
-            outline: none; transition: border-color .2s;
-        }
-        .otp-inputs input:focus { border-color: #6c63ff; }
-        .otp-hint { color: rgba(255,255,255,0.45); font-size: 13px; text-align: center; margin-bottom: 6px; }
-        .resend-btn {
-            background: none; border: none; color: #6c63ff;
-            font-size: 13px; cursor: pointer; text-decoration: underline;
-            display: block; margin: 8px auto 0;
-        }
-        .resend-btn:disabled { color: rgba(255,255,255,0.3); cursor: default; text-decoration: none; }
-        #recaptcha-container { display: flex; justify-content: center; margin: 12px 0; }
+        :root{--bg:#090910;--surf:#111118;--surf2:#1a1a26;--bord:rgba(255,255,255,0.08);--acc:#a78bfa;--teal:#11998e;--purple:#7c6fcd;--grn:#34d399;--red:#f87171;--txt:#eeeef8;--mut:rgba(238,238,248,0.45)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,111,205,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(124,111,205,0.03) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+        .box{width:100%;max-width:440px;position:relative;z-index:1}
+        .logo{text-align:center;margin-bottom:24px}
+        .logo-icon{font-size:46px;display:block;margin-bottom:8px;animation:p 2s infinite}
+        @keyframes p{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+        .logo h1{font-size:30px;font-weight:900;background:linear-gradient(135deg,var(--acc),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .logo p{color:var(--mut);font-size:13px;margin-top:4px}
+        .card{background:var(--surf);border:1px solid var(--bord);border-radius:16px;padding:22px}
+        .fg{margin-bottom:13px}
+        label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:5px}
+        input{width:100%;background:var(--surf2);border:1px solid var(--bord);border-radius:10px;padding:11px 14px;font-family:'Cairo',sans-serif;font-size:13px;color:var(--txt);outline:none;transition:border-color .2s}
+        input:focus{border-color:rgba(167,139,250,0.5)}
+        input::placeholder{color:var(--mut)}
+        input.ef{border-color:rgba(248,113,113,0.6)!important}
+        .grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+        .go{background:var(--surf2);border:1.5px solid var(--bord);border-radius:11px;padding:13px 6px;text-align:center;cursor:pointer;transition:all .18s;user-select:none}
+        .go:hover{border-color:rgba(167,139,250,0.4)}
+        .go.sel{background:rgba(124,111,205,0.12);border-color:var(--acc)}
+        .go .gn{font-size:24px;font-weight:900;color:var(--mut);display:block}
+        .go.sel .gn{color:var(--acc)}
+        .go .gl{font-size:10px;color:var(--mut);margin-top:2px}
+        .go.sel .gl{color:var(--acc)}
+        .btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;transition:opacity .2s}
+        .btn:hover{opacity:.88}
+        .btn:disabled{opacity:.5;cursor:not-allowed}
+        .hint{font-size:11px;margin-top:4px;color:var(--mut)}
+        .hint.bad{color:var(--red)}.hint.good{color:var(--grn)}
+        .msg{margin-top:10px;font-size:12px;padding:9px 13px;border-radius:9px;display:none;line-height:1.5}
+        .msg.ok{background:rgba(52,211,153,.1);color:var(--grn);display:block}
+        .msg.err{background:rgba(248,113,113,.1);color:var(--red);display:block}
+        .foot{text-align:center;margin-top:18px;font-size:13px;color:var(--mut)}
+        .foot a{color:var(--acc);text-decoration:none;font-weight:700}
     </style>
 </head>
 <body>
-    <div class="register-box">
-        <div class="logo">
-            <span class="logo-icon">📚</span>
-            <h1>سنتر</h1>
-            <p>سجل بياناتك للانضمام</p>
+<div class="box">
+    <div class="logo"><span class="logo-icon">📚</span><h1>سنتر</h1><p>سجل بياناتك للانضمام</p></div>
+    <div class="card">
+        <label>اختار صفك الدراسي</label>
+        <div class="grade-grid">
+            <div class="go sel" onclick="sg(1,this)"><span class="gn">١</span><span class="gl">أول ثانوي</span></div>
+            <div class="go" onclick="sg(2,this)"><span class="gn">٢</span><span class="gl">ثاني ثانوي</span></div>
+            <div class="go" onclick="sg(3,this)"><span class="gn">٣</span><span class="gl">ثالث ثانوي</span></div>
         </div>
-
-        <!-- الخطوة 1: بيانات التسجيل -->
-        <div class="card" id="step-register">
-            <div class="form-group">
-                <label>الاسم بالكامل</label>
-                <input type="text" id="name" placeholder="أدخل اسمك">
-            </div>
-            <div class="form-group">
-                <label>رقم موبايلك</label>
-                <input type="tel" id="phone" placeholder="01xxxxxxxxx">
-            </div>
-            <div class="form-group">
-                <label>رقم موبايل ولي الأمر</label>
-                <input type="tel" id="parentPhone" placeholder="01xxxxxxxxx">
-            </div>
-            <div class="form-group">
-                <label>كلمة المرور</label>
-                <input type="password" id="password" placeholder="اختار كلمة مرور">
-            </div>
-            <div id="recaptcha-container"></div>
-            <button class="btn" id="sendOtpBtn" onclick="sendOTP()">إرسال كود التحقق 📱</button>
-            <div id="msg"></div>
+        <div class="fg">
+            <label>الاسم بالكامل (رباعي)</label>
+            <input type="text" id="name" placeholder="مثال: محمد أحمد علي حسن" oninput="cn()">
+            <div class="hint" id="nh">الاسم لازم يكون 4 كلمات على الأقل</div>
         </div>
-
-        <!-- الخطوة 2: إدخال OTP -->
-        <div class="card" id="step-otp">
-            <div style="text-align:center; margin-bottom: 8px;">
-                <span style="font-size:36px">📩</span>
-            </div>
-            <p class="otp-hint">أُرسل كود مكون من 6 أرقام على رقم</p>
-            <p class="otp-hint" id="otp-phone-display" style="color:#6c63ff; font-weight:700; font-size:15px;"></p>
-            <div class="otp-inputs" id="otp-boxes">
-                <input type="tel" maxlength="1" oninput="moveNext(this,1)" onkeydown="movePrev(event,this)">
-                <input type="tel" maxlength="1" oninput="moveNext(this,2)" onkeydown="movePrev(event,this)">
-                <input type="tel" maxlength="1" oninput="moveNext(this,3)" onkeydown="movePrev(event,this)">
-                <input type="tel" maxlength="1" oninput="moveNext(this,4)" onkeydown="movePrev(event,this)">
-                <input type="tel" maxlength="1" oninput="moveNext(this,5)" onkeydown="movePrev(event,this)">
-                <input type="tel" maxlength="1" oninput="moveNext(this,6)" onkeydown="movePrev(event,this)">
-            </div>
-            <button class="btn" id="verifyBtn" onclick="verifyOTP()">تأكيد وتسجيل ✅</button>
-            <button class="resend-btn" id="resendBtn" onclick="resendOTP()" disabled>
-                إعادة إرسال الكود (<span id="countdown">60</span>s)
-            </button>
-            <div id="msg2"></div>
-        </div>
-
-        <div class="login-link">
-            عندك حساب؟ <a href="login.html">سجل دخول</a>
-        </div>
+        <div class="fg"><label>رقم موبايلك</label><input type="tel" id="phone" placeholder="01xxxxxxxxx" maxlength="11"></div>
+        <div class="fg"><label>رقم موبايل ولي الأمر</label><input type="tel" id="pphone" placeholder="01xxxxxxxxx" maxlength="11"></div>
+        <div class="fg"><label>كلمة المرور</label><input type="password" id="pwd" placeholder="6 أحرف على الأقل"></div>
+        <button class="btn" id="rb" onclick="reg()">تسجيل 🚀</button>
+        <div class="msg" id="msg"></div>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-        import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
-            authDomain: "center-app-30dc9.firebaseapp.com",
-            projectId: "center-app-30dc9",
-            storageBucket: "center-app-30dc9.firebasestorage.app",
-            messagingSenderId: "407314952817",
-            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        auth.languageCode = 'ar';
-
-        let confirmationResult = null;
-        let pendingData = null;
-        let countdownInterval = null;
-
-        // تحويل الرقم المصري لصيغة دولية
-        function toE164(phone) {
-            const clean = phone.replace(/\D/g, '');
-            if (clean.startsWith('0')) return '+2' + clean;
-            if (clean.startsWith('2')) return '+' + clean;
-            return '+2' + clean;
-        }
-
-        function setupRecaptcha() {
-            if (!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                    size: 'normal',
-                    callback: () => {},
-                    'expired-callback': () => {
-                        window.recaptchaVerifier = null;
-                    }
-                });
-                window.recaptchaVerifier.render();
-            }
-        }
-
-        setupRecaptcha();
-
-        window.sendOTP = async function() {
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const parentPhone = document.getElementById('parentPhone').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const btn = document.getElementById('sendOtpBtn');
-            const msg = document.getElementById('msg');
-
-            if (!name || !phone || !parentPhone || !password) {
-                msg.className = 'msg msg-error';
-                msg.textContent = '❌ من فضلك املأ كل البيانات';
-                return;
-            }
-            if (phone.length < 11) {
-                msg.className = 'msg msg-error';
-                msg.textContent = '❌ رقم الموبايل غلط';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.textContent = 'جاري الإرسال...';
-            msg.textContent = '';
-
-            try {
-                // تحقق من عدم وجود الرقم مسبقاً
-                const q = query(collection(db, 'students'), where('phone', '==', phone));
-                const existing = await getDocs(q);
-                if (!existing.empty) {
-                    msg.className = 'msg msg-error';
-                    msg.textContent = '❌ الرقم ده مسجل قبل كده!';
-                    btn.disabled = false;
-                    btn.textContent = 'إرسال كود التحقق 📱';
-                    return;
-                }
-
-                pendingData = { name, phone, parentPhone, password };
-                const phoneE164 = toE164(phone);
-
-                confirmationResult = await signInWithPhoneNumber(auth, phoneE164, window.recaptchaVerifier);
-
-                // اظهر خطوة OTP
-                document.getElementById('step-register').style.display = 'none';
-                document.getElementById('step-otp').style.display = 'block';
-                document.getElementById('otp-phone-display').textContent = phone;
-                document.getElementById('otp-boxes').querySelectorAll('input')[0].focus();
-
-                startCountdown();
-
-            } catch (err) {
-                console.error(err);
-                msg.className = 'msg msg-error';
-                msg.textContent = '❌ فشل إرسال الكود. تأكد من الرقم وحاول تاني';
-                btn.disabled = false;
-                btn.textContent = 'إرسال كود التحقق 📱';
-                window.recaptchaVerifier = null;
-                setupRecaptcha();
-            }
-        }
-
-        window.verifyOTP = async function() {
-            const inputs = document.getElementById('otp-boxes').querySelectorAll('input');
-            const code = Array.from(inputs).map(i => i.value).join('');
-            const btn = document.getElementById('verifyBtn');
-            const msg = document.getElementById('msg2');
-
-            if (code.length < 6) {
-                msg.className = 'msg msg-error';
-                msg.textContent = '❌ ادخل الكود كامل (6 أرقام)';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.textContent = 'جاري التحقق...';
-
-            try {
-                await confirmationResult.confirm(code);
-
-                // تم التحقق — احفظ في Firestore
-                await addDoc(collection(db, 'students'), {
-                    ...pendingData,
-                    status: 'pending',
-                    createdAt: new Date().toISOString()
-                });
-
-                msg.className = 'msg msg-success';
-                msg.textContent = '✅ تم التسجيل! في انتظار موافقة المدرس';
-                btn.textContent = 'تم ✅';
-                clearInterval(countdownInterval);
-
-            } catch (err) {
-                console.error(err);
-                msg.className = 'msg msg-error';
-                msg.textContent = '❌ الكود غلط أو انتهت صلاحيته';
-                btn.disabled = false;
-                btn.textContent = 'تأكيد وتسجيل ✅';
-            }
-        }
-
-        window.resendOTP = async function() {
-            const btn = document.getElementById('resendBtn');
-            btn.disabled = true;
-            window.recaptchaVerifier = null;
-            setupRecaptcha();
-            try {
-                const phoneE164 = toE164(pendingData.phone);
-                confirmationResult = await signInWithPhoneNumber(auth, phoneE164, window.recaptchaVerifier);
-                document.getElementById('msg2').className = 'msg msg-success';
-                document.getElementById('msg2').textContent = '✅ تم إعادة إرسال الكود';
-                startCountdown();
-            } catch (err) {
-                document.getElementById('msg2').className = 'msg msg-error';
-                document.getElementById('msg2').textContent = '❌ فشل إعادة الإرسال، حاول بعد شوية';
-            }
-        }
-
-        function startCountdown() {
-            clearInterval(countdownInterval);
-            let secs = 60;
-            const btn = document.getElementById('resendBtn');
-            const span = document.getElementById('countdown');
-            btn.disabled = true;
-            span.textContent = secs;
-            countdownInterval = setInterval(() => {
-                secs--;
-                span.textContent = secs;
-                if (secs <= 0) {
-                    clearInterval(countdownInterval);
-                    btn.disabled = false;
-                    btn.textContent = 'إعادة إرسال الكود';
-                }
-            }, 1000);
-        }
-
-        // تنقل بين خانات OTP
-        window.moveNext = function(el, idx) {
-            el.value = el.value.replace(/\D/g, '');
-            if (el.value && idx < 6) {
-                document.getElementById('otp-boxes').querySelectorAll('input')[idx].focus();
-            }
-            // لو اكتمل تلقائياً
-            const all = document.getElementById('otp-boxes').querySelectorAll('input');
-            if (Array.from(all).every(i => i.value)) verifyOTP();
-        }
-
-        window.movePrev = function(e, el) {
-            if (e.key === 'Backspace' && !el.value) {
-                const inputs = document.getElementById('otp-boxes').querySelectorAll('input');
-                const idx = Array.from(inputs).indexOf(el);
-                if (idx > 0) inputs[idx - 1].focus();
-            }
-        }
-    </script>
+    <div class="foot">عندك حساب؟ <a href="login.html">سجل دخول</a></div>
+</div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import{getFirestore,collection,addDoc,query,where,getDocs}from"https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",authDomain:"center-app-30dc9.firebaseapp.com",projectId:"center-app-30dc9",storageBucket:"center-app-30dc9.firebasestorage.app",messagingSenderId:"407314952817",appId:"1:407314952817:web:fea2ab6f43e8250a34a1d0"};
+const app=initializeApp(cfg);const db=getFirestore(app);
+async function hp(p){const e=new TextEncoder().encode(p);const b=await crypto.subtle.digest('SHA-256',e);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+let grade=1;
+window.sg=function(g,el){grade=g;document.querySelectorAll('.go').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');}
+window.cn=function(){
+    const v=document.getElementById('name').value.trim();
+    const w=v.split(/\s+/).filter(x=>x.length>0);
+    const h=document.getElementById('nh');const i=document.getElementById('name');
+    if(!v){h.className='hint';h.textContent='الاسم لازم يكون 4 كلمات على الأقل';i.classList.remove('ef');}
+    else if(w.length<4){h.className='hint bad';h.textContent='❌ أدخلت '+w.length+' كلمة — لازم 4 كلمات';i.classList.add('ef');}
+    else{h.className='hint good';h.textContent='✅ الاسم صح';i.classList.remove('ef');}
+}
+function sm(t,x){const e=document.getElementById('msg');e.className='msg '+t;e.textContent=x;}
+window.reg=async function(){
+    const name=document.getElementById('name').value.trim();
+    const phone=document.getElementById('phone').value.trim();
+    const pp=document.getElementById('pphone').value.trim();
+    const pwd=document.getElementById('pwd').value.trim();
+    const btn=document.getElementById('rb');
+    const words=name.split(/\s+/).filter(x=>x.length>0);
+    if(words.length<4){sm('err','❌ الاسم لازم يكون 4 كلمات (اسم رباعي) — أدخلت '+words.length+' كلمة');document.getElementById('name').focus();return;}
+    if(!phone||phone.length<11){sm('err','❌ رقم الموبايل لازم يكون 11 رقم');return;}
+    if(!pp||pp.length<11){sm('err','❌ رقم ولي الأمر لازم يكون 11 رقم');return;}
+    if(pwd.length<6){sm('err','❌ كلمة المرور لازم تكون 6 أحرف على الأقل');return;}
+    btn.disabled=true;btn.textContent='جاري التسجيل...';
+    try{
+        const q=query(collection(db,'students'),where('phone','==',phone));
+        const ex=await getDocs(q);
+        if(!ex.empty){sm('err','❌ الرقم ده مسجل قبل كده!');btn.disabled=false;btn.textContent='تسجيل 🚀';return;}
+        const h=await hp(pwd);
+        await addDoc(collection(db,'students'),{name,phone,parentPhone:pp,password:h,grade,status:'pending',createdAt:new Date().toISOString()});
+        sm('ok','✅ تم التسجيل! في انتظار موافقة المدرس على حسابك');
+        btn.textContent='تم ✅';
+        setTimeout(()=>window.location.href='login.html',2500);
+    }catch(e){sm('err','❌ حصل خطأ، حاول تاني');btn.disabled=false;btn.textContent='تسجيل 🚀';}
+}
+</script>
 </body>
 </html>
