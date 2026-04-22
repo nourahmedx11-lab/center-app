@@ -1,3 +1,6 @@
+Student · HTML
+Copy
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -11,7 +14,11 @@
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
         body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,111,205,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,111,205,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+ 
+        /* Desktop layout */
         .shell{display:flex;min-height:100vh;position:relative;z-index:1}
+ 
+        /* Sidebar (desktop only) */
         .side{width:216px;flex-shrink:0;background:var(--surf);border-left:1px solid var(--bord);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
         .slogo{padding:22px 18px 18px;border-bottom:1px solid var(--bord)}
         .lname{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--acc),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -19,6 +26,7 @@
         .schip{margin:14px 10px;background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px}
         .sav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#fff}
         .snm{font-size:12px;font-weight:700}.srl{font-size:10px;color:var(--mut)}
+        .grade-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(167,139,250,.12);color:var(--acc);margin-top:3px}
         .nav{flex:1;padding:6px 0;overflow-y:auto}
         .ni{display:flex;align-items:center;gap:9px;padding:10px 18px;font-size:13px;font-weight:600;color:var(--mut);cursor:pointer;transition:all .18s;border-right:3px solid transparent}
         .ni:hover{color:var(--txt);background:rgba(255,255,255,0.025)}
@@ -27,74 +35,113 @@
         .sfoot{padding:14px 10px;border-top:1px solid var(--bord)}
         .lbtn{width:100%;padding:8px;background:transparent;border:1px solid var(--bord);border-radius:9px;color:var(--mut);font-family:'Cairo',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s}
         .lbtn:hover{border-color:var(--red);color:var(--red)}
-        .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-        .topbar{background:rgba(9,9,16,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bord);padding:0 26px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+ 
+        .main{flex:1;display:flex;flex-direction:column;overflow:hidden;padding-bottom:0}
+        .topbar{background:rgba(9,9,16,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--bord);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
         .tbt{font-size:15px;font-weight:700}.tbsub{font-size:10px;color:var(--mut);margin-top:1px}
-        .scanbtn{background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:9px;padding:8px 16px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:opacity .18s}
-        .scanbtn:hover{opacity:.85}
-        .content{flex:1;overflow-y:auto;padding:22px 26px}
+        .scanbtn{background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:9px;padding:7px 14px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+ 
+        .content{flex:1;overflow-y:auto;padding:20px}
         .content::-webkit-scrollbar{width:3px}
         .content::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.07);border-radius:2px}
-        .sc{display:none;animation:fi .28s ease}.sc.on{display:block}
-        @keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-        .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-        .scard{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:16px;position:relative;overflow:hidden;transition:transform .18s;animation:su .4s ease both}
-        .scard:hover{transform:translateY(-2px)}
-        @keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+ 
+        /* Screens */
+        .sc{display:none;animation:fi .25s ease}.sc.on{display:block}
+        @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+ 
+        /* Stats */
+        .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+        .scard{background:var(--surf);border:1px solid var(--bord);border-radius:13px;padding:14px;position:relative;overflow:hidden;animation:su .4s ease both}
+        @keyframes su{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
         .scard:nth-child(1){animation-delay:.04s}.scard:nth-child(2){animation-delay:.08s}.scard:nth-child(3){animation-delay:.12s}
-        .scard::before{content:'';position:absolute;top:-24px;left:-24px;width:70px;height:70px;border-radius:50%;opacity:.18;filter:blur(18px)}
+        .scard::before{content:'';position:absolute;top:-20px;left:-20px;width:60px;height:60px;border-radius:50%;opacity:.18;filter:blur(16px)}
         .scard.p::before{background:var(--purple)}.scard.t::before{background:var(--teal)}.scard.r::before{background:var(--red)}
-        .snum{font-size:28px;font-weight:900;line-height:1}
+        .snum{font-size:26px;font-weight:900;line-height:1}
         .scard.p .snum{color:var(--acc)}.scard.t .snum{color:var(--grn)}.scard.r .snum{color:var(--red)}
-        .slabel{font-size:11px;color:var(--mut);margin-top:5px}
-        .card{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:16px;margin-bottom:14px}
+        .slabel{font-size:10px;color:var(--mut);margin-top:4px}
+ 
+        /* Cards */
+        .card{background:var(--surf);border:1px solid var(--bord);border-radius:13px;padding:15px;margin-bottom:13px}
         .card.last{margin-bottom:0}
-        .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+        .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
         .ct{font-size:13px;font-weight:700}
-        .lgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-        .lcard{background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:14px;cursor:pointer;transition:all .18s;text-decoration:none;display:block}
-        .lcard:hover{border-color:rgba(124,111,205,0.4);transform:translateY(-1px)}
-        .lic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:22px}
-        .ltit{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:3px}
+ 
+        /* Lecture grid */
+        .lgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+        .lcard{background:var(--surf2);border:1px solid var(--bord);border-radius:11px;padding:13px;cursor:pointer;transition:all .18s;text-decoration:none;display:block}
+        .lcard:hover{border-color:rgba(124,111,205,.4);transform:translateY(-1px)}
+        .lic{font-size:22px;margin-bottom:8px}
+        .ltit{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:2px;line-height:1.4}
         .lmeta{font-size:10px;color:var(--mut)}
-        .ltype{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-block;margin-top:6px}
+        .ltype{font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;display:inline-block;margin-top:5px}
         .tv{background:rgba(248,113,113,.12);color:var(--red)}.tp{background:rgba(167,139,250,.12);color:var(--acc)}.ta{background:rgba(52,211,153,.12);color:var(--grn)}
-        .qwrap{display:flex;gap:8px;margin-bottom:14px}
-        .qinp{flex:1;background:var(--surf2);border:1px solid var(--bord);border-radius:10px;padding:10px 14px;font-family:'Cairo',sans-serif;font-size:13px;color:var(--txt);outline:none;transition:border-color .18s;resize:none;min-height:44px}
+ 
+        /* Q&A */
+        .grade-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(167,139,250,.12);color:var(--acc);margin-bottom:12px}
+        .qwrap{display:flex;gap:7px;margin-bottom:13px}
+        .qinp{flex:1;background:var(--surf2);border:1px solid var(--bord);border-radius:10px;padding:10px 13px;font-family:'Cairo',sans-serif;font-size:13px;color:var(--txt);outline:none;transition:border-color .18s;resize:none;min-height:42px}
         .qinp:focus{border-color:rgba(124,111,205,.5)}
         .qinp::placeholder{color:var(--mut)}
-        .qsend{background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:10px;padding:0 18px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0}
-        .qitem{background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:14px;margin-bottom:10px}
+        .qsend{background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:10px;padding:0 16px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;min-width:70px}
+        .qitem{background:var(--surf2);border:1px solid var(--bord);border-radius:11px;padding:13px;margin-bottom:9px}
         .qitem:last-child{margin-bottom:0}
-        .qqtxt{font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.55}
-        .qans{font-size:12px;color:var(--grn);line-height:1.6;padding:10px 12px;background:rgba(52,211,153,.05);border-radius:8px;border-right:2px solid var(--grn)}
-        .qpend{font-size:11px;color:var(--mut);font-style:italic;padding:8px 0}
-        .qmeta{font-size:10px;color:var(--mut);margin-bottom:6px;display:flex;align-items:center;gap:4px}
-        .qdot{width:6px;height:6px;border-radius:50%;display:inline-block}
-        .srow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--bord)}
+        .qasker{font-size:11px;font-weight:700;color:var(--acc);margin-bottom:5px}
+        .qqtxt{font-size:13px;color:var(--txt);margin-bottom:7px;line-height:1.55}
+        .qans{font-size:12px;color:var(--grn);line-height:1.6;padding:9px 11px;background:rgba(52,211,153,.05);border-radius:8px;border-right:2px solid var(--grn)}
+        .qpend{font-size:11px;color:var(--mut);font-style:italic;padding:6px 0}
+        .qdot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-left:4px;vertical-align:middle}
+ 
+        /* Rows */
+        .srow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bord)}
         .srow:last-child{border-bottom:none}
         .badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center}
         .bg{background:rgba(52,211,153,.1);color:var(--grn)}.br{background:rgba(248,113,113,.1);color:var(--red)}.ba{background:rgba(251,191,36,.1);color:var(--amb)}.bp{background:rgba(167,139,250,.1);color:var(--acc)}
-        .irow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bord);font-size:13px}
+        .irow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bord);font-size:13px}
         .irow:last-child{border-bottom:none}
         .ilabel{color:var(--mut);font-size:12px}
-        .phdr{text-align:center;padding:28px 20px 20px}
-        .pav{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;margin:0 auto 12px}
-        .pname{font-size:20px;font-weight:900;margin-bottom:4px}
-        .pphone{font-size:13px;color:var(--mut)}
-        .empty{text-align:center;padding:26px;color:var(--mut);font-size:13px}
+ 
+        /* Profile */
+        .phdr{text-align:center;padding:24px 20px 18px}
+        .pav{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;margin:0 auto 10px}
+        .pname{font-size:19px;font-weight:900;margin-bottom:3px}
+        .pphone{font-size:12px;color:var(--mut)}
+ 
+        .empty{text-align:center;padding:24px;color:var(--mut);font-size:13px}
         .live{width:7px;height:7px;border-radius:50%;background:var(--grn);display:inline-block;animation:pd 2s ease-in-out infinite}
         @keyframes pd{0%,100%{opacity:1}50%{opacity:.4}}
-        @media(max-width:768px){.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.lgrid{grid-template-columns:1fr}}
+ 
+        /* ═══ MOBILE BOTTOM NAV ═══ */
+        .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bord);z-index:100;padding:6px 0 env(safe-area-inset-bottom,6px)}
+        .bn-items{display:flex;justify-content:space-around}
+        .bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 10px;cursor:pointer;color:var(--mut);transition:color .15s;border:none;background:none;font-family:'Cairo',sans-serif;flex:1}
+        .bn-item.on{color:var(--acc)}
+        .bn-item svg{width:20px;height:20px;flex-shrink:0}
+        .bn-label{font-size:9px;font-weight:600}
+        .mobile-header{display:none;background:rgba(9,9,16,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bord);padding:12px 16px;position:sticky;top:0;z-index:10;align-items:center;justify-content:space-between}
+        .mobile-header .mh-title{font-size:15px;font-weight:700}
+        .mobile-header .mh-sub{font-size:10px;color:var(--mut);margin-top:1px}
+ 
+        @media(max-width:768px){
+            .side{display:none}
+            .topbar{display:none}
+            .mobile-header{display:flex}
+            .bottom-nav{display:block}
+            .content{padding:14px 14px 80px}
+            .stats{grid-template-columns:repeat(3,1fr);gap:8px}
+            .lgrid{grid-template-columns:1fr 1fr}
+            .main{padding-bottom:0}
+        }
     </style>
 </head>
 <body>
 <div class="shell">
+ 
+  <!-- Desktop Sidebar -->
   <div class="side">
     <div class="slogo"><div class="lname">مُدرِّسي</div><div class="lsub">بوابة الطالب</div></div>
     <div class="schip">
       <div class="sav" id="sav">؟</div>
-      <div><div class="snm" id="snm">جاري...</div><div class="srl">طالب</div></div>
+      <div><div class="snm" id="snm">جاري...</div><div class="srl">طالب</div><div class="grade-pill" id="gpill"></div></div>
     </div>
     <div class="nav">
       <div class="ni on" onclick="go('lec')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="2"/><path d="M6.5 6.5l3.5 2-3.5 2V6.5z"/></svg>المحاضرات</div>
@@ -107,36 +154,49 @@
     </div>
     <div class="sfoot"><button class="lbtn" onclick="logout()">تسجيل خروج</button></div>
   </div>
-
+ 
   <div class="main">
+ 
+    <!-- Desktop topbar -->
     <div class="topbar">
       <div><div class="tbt" id="ptit">المحاضرات</div><div class="tbsub"><span class="live"></span> متصل الآن</div></div>
       <a class="scanbtn" href="scan.html">📱 سجّل حضورك</a>
     </div>
+ 
+    <!-- Mobile header -->
+    <div class="mobile-header">
+      <div><div class="mh-title" id="ptit-m">المحاضرات</div><div class="mh-sub"><span class="live"></span> <span id="grade-label-m"></span></div></div>
+      <a class="scanbtn" href="scan.html" style="font-size:11px;padding:6px 10px">📱 حضور</a>
+    </div>
+ 
     <div class="content">
-
+ 
+      <!-- المحاضرات -->
       <div class="sc on" id="s-lec">
         <div class="card last">
           <div class="ch"><span class="ct">📺 محاضرات المنهج</span><span id="lcnt" style="font-size:11px;color:var(--mut)"></span></div>
           <div class="lgrid" id="lgrid"><div class="empty" style="grid-column:span 2">جاري التحميل...</div></div>
         </div>
       </div>
-
+ 
+      <!-- اسأل المدرس -->
       <div class="sc" id="s-qa">
         <div class="card">
           <div class="ch"><span class="ct">💬 اسأل المدرس</span></div>
+          <div class="grade-badge" id="qa-grade-badge"></div>
           <div class="qwrap">
-            <textarea class="qinp" id="qinp" placeholder="اكتب سؤالك هنا..."></textarea>
+            <textarea class="qinp" id="qinp" placeholder="اكتب سؤالك هنا... (سيظهر لزملائك في نفس الصف)"></textarea>
             <button class="qsend" onclick="sendQ()">إرسال</button>
           </div>
           <div id="qmsg" style="font-size:12px;padding:4px 0"></div>
         </div>
         <div class="card last">
-          <div class="ch"><span class="ct">أسئلتي</span></div>
+          <div class="ch"><span class="ct">أسئلة الصف</span><span style="font-size:10px;color:var(--mut)">مرئية للجميع</span></div>
           <div id="qlist"><div class="empty">جاري التحميل...</div></div>
         </div>
       </div>
-
+ 
+      <!-- الحضور -->
       <div class="sc" id="s-att">
         <div class="stats">
           <div class="scard p"><div class="snum" id="at">—</div><div class="slabel">إجمالي الحصص</div></div>
@@ -145,121 +205,162 @@
         </div>
         <div class="card last"><div class="ch"><span class="ct">سجل الحضور</span></div><div id="alog"></div></div>
       </div>
-
+ 
+      <!-- المدفوعات -->
       <div class="sc" id="s-pay">
         <div class="card last">
-          <div class="ch"><span class="ct">💰 المدفوعات</span><a class="scanbtn" href="receipt.html" style="font-size:11px;padding:6px 12px">رفع إيصال</a></div>
+          <div class="ch"><span class="ct">💰 المدفوعات</span><a class="scanbtn" href="receipt.html" style="font-size:11px;padding:6px 10px">رفع إيصال</a></div>
           <div id="pinfo"></div>
         </div>
       </div>
-
+ 
+      <!-- الاختبارات -->
       <div class="sc" id="s-exm">
         <div class="card last">
-          <div class="ch"><span class="ct">📝 الاختبارات</span><a class="scanbtn" href="take-exam.html" style="font-size:11px;padding:6px 12px">حل اختبار</a></div>
+          <div class="ch"><span class="ct">📝 الاختبارات</span><a class="scanbtn" href="take-exam.html" style="font-size:11px;padding:6px 10px">حل اختبار</a></div>
           <div id="elist"></div>
         </div>
       </div>
-
+ 
+      <!-- بياناتي -->
       <div class="sc" id="s-pro">
         <div class="card last">
           <div class="phdr">
             <div class="pav" id="pav">؟</div>
             <div class="pname" id="pnm">—</div>
             <div class="pphone" id="pph">—</div>
-            <span class="badge bg" style="margin-top:10px;display:inline-block">✅ طالب مقبول</span>
+            <span class="badge bg" style="margin-top:8px;display:inline-block">✅ طالب مقبول</span>
+            <span class="badge bp" style="margin-top:8px;margin-right:4px;display:inline-block" id="grade-badge-pro"></span>
           </div>
-          <div style="border-top:1px solid var(--bord);padding-top:14px">
+          <div style="border-top:1px solid var(--bord);padding-top:12px">
             <div class="irow"><span class="ilabel">الاسم</span><span id="inm">—</span></div>
             <div class="irow"><span class="ilabel">رقم موبايلي</span><span id="iph">—</span></div>
             <div class="irow"><span class="ilabel">رقم ولي الأمر</span><span id="ipa">—</span></div>
+            <div class="irow"><span class="ilabel">الصف الدراسي</span><span id="igr">—</span></div>
           </div>
         </div>
       </div>
-
+ 
     </div>
   </div>
 </div>
-
+ 
+<!-- Mobile Bottom Nav -->
+<div class="bottom-nav">
+  <div class="bn-items">
+    <button class="bn-item on" onclick="go('lec')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="10" rx="2"/><path d="M6.5 6.5l3.5 2-3.5 2V6.5z"/></svg><span class="bn-label">محاضرات</span></button>
+    <button class="bn-item" onclick="go('qa')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 10a1 1 0 01-1 1H5l-3 3V3a1 1 0 011-1h10a1 1 0 011 1v7z"/></svg><span class="bn-label">اسأل</span></button>
+    <button class="bn-item" onclick="window.location.href='scan.html'" style="position:relative">
+      <div style="width:44px;height:44px;background:linear-gradient(135deg,var(--purple),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-16px;border:3px solid var(--bg)">
+        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="10" y="1" width="5" height="5" rx="1"/><rect x="1" y="10" width="5" height="5" rx="1"/><rect x="11" y="11" width="4" height="4" rx="1"/></svg>
+      </div>
+      <span class="bn-label">حضور</span>
+    </button>
+    <button class="bn-item" onclick="go('att')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 8l2 2 4-4"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg><span class="bn-label">سجلي</span></button>
+    <button class="bn-item" onclick="go('pro')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14a6 6 0 0112 0"/></svg><span class="bn-label">بياناتي</span></button>
+  </div>
+</div>
+ 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-
+ 
 const cfg={apiKey:"AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",authDomain:"center-app-30dc9.firebaseapp.com",projectId:"center-app-30dc9",storageBucket:"center-app-30dc9.firebasestorage.app",messagingSenderId:"407314952817",appId:"1:407314952817:web:fea2ab6f43e8250a34a1d0"};
-const app=initializeApp(cfg);const db=getFirestore(app);
-
+const app=initializeApp(cfg); const db=getFirestore(app);
+ 
 const student=JSON.parse(localStorage.getItem('student'));
-if(!student)window.location.href='login.html';
-
+if(!student) window.location.href='login.html';
+ 
+const grade=student.grade||1;
+const gradeNames={1:'الأول الثانوي',2:'الثاني الثانوي',3:'الثالث الثانوي'};
+const gradeName=gradeNames[grade]||'الأول الثانوي';
+ 
+// Init UI
 const ini=student.name.slice(0,2);
-['sav','pav'].forEach(id=>document.getElementById(id).textContent=ini);
-document.getElementById('snm').textContent=student.name;
+['sav','pav'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=ini;});
+['snm'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=student.name;});
+document.getElementById('gpill').textContent=gradeName;
+document.getElementById('grade-label-m').textContent=gradeName;
+document.getElementById('qa-grade-badge').textContent='صف: '+gradeName;
+document.getElementById('grade-badge-pro').textContent=gradeName;
 document.getElementById('pnm').textContent=student.name;
 document.getElementById('pph').textContent=student.phone;
 document.getElementById('inm').textContent=student.name;
 document.getElementById('iph').textContent=student.phone;
 document.getElementById('ipa').textContent=student.parentPhone;
-
+document.getElementById('igr').textContent=gradeName;
+ 
 const TITLES={lec:'المحاضرات',qa:'اسأل المدرس',att:'سجل حضوري',pay:'المدفوعات',exm:'الاختبارات',pro:'بياناتي'};
+ 
 window.go=function(id){
   document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('on'));
   document.getElementById('s-'+id).classList.add('on');
-  const map={lec:0,qa:1,att:2,pay:3,exm:4,pro:5};
-  document.querySelectorAll('.ni')[map[id]]?.classList.add('on');
-  document.getElementById('ptit').textContent=TITLES[id]||'';
+  const dmap={lec:0,qa:1,att:2,pay:3,exm:4,pro:5};
+  document.querySelectorAll('.ni')[dmap[id]]?.classList.add('on');
+  const bmap={lec:0,qa:1,att:3,pro:4};
+  if(bmap[id]!==undefined)document.querySelectorAll('.bn-item')[bmap[id]]?.classList.add('on');
+  const t=TITLES[id]||'';
+  document.getElementById('ptit').textContent=t;
+  document.getElementById('ptit-m').textContent=t;
   if(id==='lec')loadLec();
   if(id==='qa')loadQA();
   if(id==='att')loadAtt();
   if(id==='pay')loadPay();
   if(id==='exm')loadExm();
 }
-
+ 
+// ── محاضرات الصف ──────────────────────────────────────
 async function loadLec(){
   const g=document.getElementById('lgrid');
   g.innerHTML='<div class="empty" style="grid-column:span 2">جاري التحميل...</div>';
   try{
+    // المحاضرات المخصصة للصف ده + المحاضرات العامة لكل الصفوف
     const snap=await getDocs(query(collection(db,'lectures'),orderBy('createdAt','desc')));
-    document.getElementById('lcnt').textContent=snap.size+' محاضرة';
-    if(snap.empty){g.innerHTML='<div class="empty" style="grid-column:span 2">📭 لا توجد محاضرات بعد</div>';return;}
+    const lecs=snap.docs.filter(d=>{const l=d.data();return !l.grade||l.grade===grade||l.grade===0;});
+    document.getElementById('lcnt').textContent=lecs.length+' محاضرة';
+    if(!lecs.length){g.innerHTML='<div class="empty" style="grid-column:span 2">📭 لا توجد محاضرات لصفك بعد</div>';return;}
     g.innerHTML='';
-    snap.forEach(d=>{
+    lecs.forEach(d=>{
       const l=d.data();
       const icon=l.type==='video'?'🎬':l.type==='pdf'?'📄':'🎵';
       const ibg=l.type==='video'?'rgba(248,113,113,.12)':l.type==='pdf'?'rgba(167,139,250,.12)':'rgba(52,211,153,.12)';
       const tc=l.type==='video'?'tv':l.type==='pdf'?'tp':'ta';
       const tl=l.type==='video'?'فيديو':l.type==='pdf'?'PDF':'صوت';
-      g.innerHTML+=`<a class="lcard" href="${l.url||'#'}" target="_blank"><div class="lic" style="background:${ibg}">${icon}</div><div class="ltit">${l.title||'بدون عنوان'}</div><div class="lmeta">${l.subject||''}</div><span class="ltype ${tc}">${tl}</span></a>`;
+      g.innerHTML+=`<a class="lcard" href="${l.url||'#'}" target="_blank"><div class="lic" style="background:${ibg}">${icon}</div><div class="ltit">${l.title||'—'}</div><div class="lmeta">${l.subject||''}</div><span class="ltype ${tc}">${tl}</span></a>`;
     });
   }catch(e){g.innerHTML='<div class="empty" style="grid-column:span 2">⚠️ تعذر التحميل</div>';}
 }
-
+ 
+// ── أسئلة الصف (عامة — كل الصف يشوفها) ────────────────
 window.sendQ=async function(){
   const inp=document.getElementById('qinp');const msg=document.getElementById('qmsg');
   const q=inp.value.trim();if(!q)return;
   try{
-    await addDoc(collection(db,'questions'),{studentId:student.id,studentName:student.name,question:q,answer:null,createdAt:serverTimestamp()});
-    inp.value='';
-    msg.style.color='var(--grn)';msg.textContent='✅ تم إرسال سؤالك!';
-    setTimeout(()=>msg.textContent='',3000);
-    loadQA();
+    await addDoc(collection(db,'questions'),{studentId:student.id,studentName:student.name,question:q,answer:null,grade,createdAt:serverTimestamp()});
+    inp.value='';msg.style.color='var(--grn)';msg.textContent='✅ تم إرسال سؤالك!';
+    setTimeout(()=>msg.textContent='',3000);loadQA();
   }catch(e){msg.style.color='var(--red)';msg.textContent='❌ حصل خطأ';}
 }
-
+ 
 async function loadQA(){
   const el=document.getElementById('qlist');
   el.innerHTML='<div class="empty">جاري التحميل...</div>';
   try{
-    const snap=await getDocs(query(collection(db,'questions'),where('studentId','==',student.id)));
-    if(snap.empty){el.innerHTML='<div class="empty">لسه ماسألتش أي سؤال</div>';return;}
+    // جلب أسئلة الصف كله — مرئية للجميع
+    const snap=await getDocs(query(collection(db,'questions'),where('grade','==',grade)));
+    if(snap.empty){el.innerHTML='<div class="empty">مفيش أسئلة لصفك لحد دلوقتي</div>';return;}
     const docs=snap.docs.sort((a,b)=>(b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0));
     el.innerHTML='';
     docs.forEach(d=>{
       const q=d.data();const ans=q.answer!=null;
-      el.innerHTML+=`<div class="qitem"><div class="qmeta"><span class="qdot" style="background:${ans?'var(--grn)':'var(--amb)'}"></span>${ans?'تمت الإجابة':'في الانتظار'}</div><div class="qqtxt">❓ ${q.question}</div>${ans?`<div class="qans">💬 ${q.answer}</div>`:'<div class="qpend">⏳ في انتظار رد المدرس...</div>'}</div>`;
+      const isMe=q.studentId===student.id;
+      el.innerHTML+=`<div class="qitem"><div class="qasker">${isMe?'أنت':q.studentName} <span class="qdot" style="background:${ans?'var(--grn)':'var(--amb)'}"></span></div><div class="qqtxt">❓ ${q.question}</div>${ans?`<div class="qans">💬 ${q.answer}</div>`:'<div class="qpend">⏳ في انتظار رد المدرس...</div>'}</div>`;
     });
   }catch(e){el.innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
 }
-
+ 
 async function loadAtt(){
   try{
     const[a,s]=await Promise.all([getDocs(query(collection(db,'attendance'),where('studentId','==',student.id))),getDocs(collection(db,'sessions'))]);
@@ -274,7 +375,7 @@ async function loadAtt(){
     });
   }catch(e){document.getElementById('alog').innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
 }
-
+ 
 async function loadPay(){
   const el=document.getElementById('pinfo');el.innerHTML='';
   try{
@@ -287,7 +388,7 @@ async function loadPay(){
     });
   }catch(e){el.innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
 }
-
+ 
 async function loadExm(){
   const el=document.getElementById('elist');el.innerHTML='';
   try{
@@ -300,9 +401,10 @@ async function loadExm(){
     });
   }catch(e){el.innerHTML='<div class="empty">⚠️ تعذر التحميل</div>';}
 }
-
+ 
 window.logout=function(){localStorage.removeItem('student');window.location.href='login.html';}
 loadLec();
 </script>
 </body>
 </html>
+ 
