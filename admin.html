@@ -3,311 +3,460 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سنتر - لوحة المدرس</title>
-    <link rel="stylesheet" href="style.css">
+    <title>سنتر — لوحة المدرس</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        .student-card { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
-        .student-card:last-child { border-bottom: none; }
-        .student-info h3 { color: #333; font-size: 16px; margin-bottom: 5px; }
-        .student-info p { color: #888; font-size: 13px; margin-bottom: 3px; }
-        .btn-approve { padding: 10px 18px; background: linear-gradient(135deg, #6c63ff, #5a52d5); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; }
-        .btn-reject { padding: 10px 18px; background: #ffebee; color: #c62828; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; margin-right: 8px; }
-        .btn-confirm { padding: 10px 18px; background: linear-gradient(135deg, #11998e, #38ef7d); color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; margin-right: 8px; }
-        .receipt-card { padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
-        .receipt-card:last-child { border-bottom: none; }
-        .receipt-card img { width: 100%; border-radius: 10px; margin: 10px 0; }
-        .receipt-info p { color: #555; font-size: 14px; margin-bottom: 5px; }
-        .result-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-        .result-row:last-child { border-bottom: none; }
-        .score { font-weight: 700; color: #6c63ff; }
-        .session-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #6c63ff, #5a52d5); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Cairo', sans-serif; margin-top: 10px; }
-        .section { display: none; }
-        .section.active { display: block; }
+        :root{--bg:#090910;--surf:#111118;--surf2:#1a1a26;--bord:rgba(255,255,255,0.07);--purple:#7c6fcd;--teal:#11998e;--acc:#a78bfa;--red:#f87171;--amb:#fbbf24;--grn:#34d399;--txt:#eeeef8;--mut:rgba(238,238,248,0.42)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,111,205,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,111,205,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0}
+        .shell{display:flex;min-height:100vh;position:relative;z-index:1}
 
-        /* الحضور */
-        .att-session { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
-        .att-session:last-child { border-bottom: none; }
-        .att-date { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 6px; }
-        .att-names { font-size: 12px; color: #666; line-height: 1.8; }
-        .att-count { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-right: 6px; }
+        /* Sidebar */
+        .side{width:216px;flex-shrink:0;background:var(--surf);border-left:1px solid var(--bord);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+        .side-logo{padding:22px 18px 18px;border-bottom:1px solid var(--bord)}
+        .logo-name{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--acc),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .logo-sub{font-size:10px;color:var(--mut);margin-top:2px}
+        .t-chip{margin:14px 10px;background:var(--surf2);border:1px solid var(--bord);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:8px}
+        .t-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+        .t-name{font-size:12px;font-weight:700}
+        .t-role{font-size:10px;color:var(--mut)}
+        .nav{flex:1;padding:6px 0;overflow-y:auto}
+        .ni{display:flex;align-items:center;gap:9px;padding:9px 18px;font-size:13px;font-weight:600;color:var(--mut);cursor:pointer;transition:all .18s;border-right:3px solid transparent}
+        .ni:hover{color:var(--txt);background:rgba(255,255,255,0.025)}
+        .ni.on{color:var(--acc);border-right-color:var(--acc);background:rgba(124,111,205,0.07)}
+        .ni svg{width:16px;height:16px;opacity:.7;flex-shrink:0}
+        .ni.on svg{opacity:1}
+        .nbadge{margin-right:auto;background:var(--red);color:#fff;font-size:9px;font-weight:900;padding:1px 5px;border-radius:10px}
+        .side-foot{padding:14px 10px;border-top:1px solid var(--bord)}
+        .lout-btn{width:100%;padding:8px;background:transparent;border:1px solid var(--bord);border-radius:9px;color:var(--mut);font-family:'Cairo',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s}
+        .lout-btn:hover{border-color:var(--red);color:var(--red)}
 
-        /* إحصائيات سريعة */
-        .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
-        .stat-box { background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(17,153,142,0.1)); border: 1px solid rgba(108,99,255,0.2); border-radius: 12px; padding: 14px; text-align: center; }
-        .stat-num { font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #6c63ff, #11998e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .stat-label { font-size: 11px; color: #888; margin-top: 2px; }
+        /* Main */
+        .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+        .topbar{background:rgba(9,9,16,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bord);padding:0 26px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+        .tb-title{font-size:15px;font-weight:700}
+        .tb-sub{font-size:10px;color:var(--mut);margin-top:1px}
+        .open-btn{background:linear-gradient(135deg,var(--purple),var(--teal));color:#fff;border:none;border-radius:9px;padding:8px 16px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .18s}
+        .open-btn:hover{opacity:.85}
+        .content{flex:1;overflow-y:auto;padding:22px 26px}
+        .content::-webkit-scrollbar{width:3px}
+        .content::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.07);border-radius:2px}
+
+        /* Screens */
+        .sc{display:none;animation:fi .28s ease}
+        .sc.on{display:block}
+        @keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+        /* Stats */
+        .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+        .scard{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:16px;position:relative;overflow:hidden;transition:transform .18s,border-color .18s;animation:su .4s ease both}
+        .scard:hover{transform:translateY(-2px);border-color:rgba(255,255,255,0.11)}
+        .scard:nth-child(1){animation-delay:.04s}.scard:nth-child(2){animation-delay:.08s}.scard:nth-child(3){animation-delay:.12s}.scard:nth-child(4){animation-delay:.16s}
+        @keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+        .scard::before{content:'';position:absolute;top:-24px;left:-24px;width:70px;height:70px;border-radius:50%;opacity:.18;filter:blur(18px)}
+        .scard.p::before{background:var(--purple)}.scard.t::before{background:var(--teal)}.scard.r::before{background:var(--red)}.scard.a::before{background:var(--amb)}
+        .snum{font-size:30px;font-weight:900;line-height:1}
+        .scard.p .snum{color:var(--acc)}.scard.t .snum{color:var(--grn)}.scard.r .snum{color:var(--red)}.scard.a .snum{color:var(--amb)}
+        .slabel{font-size:11px;color:var(--mut);margin-top:5px}
+
+        /* 2-col grid */
+        .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+
+        /* Card */
+        .card{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:16px;margin-bottom:14px}
+        .card.last{margin-bottom:0}
+        .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+        .ct{font-size:13px;font-weight:700}
+        .cl{font-size:11px;color:var(--acc);cursor:pointer}
+        .cl:hover{text-decoration:underline}
+
+        /* Rows */
+        .srow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--bord);transition:background .12s}
+        .srow:last-child{border-bottom:none}
+        .av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+        .sname{font-size:12px;font-weight:600;flex:1}
+        .smeta{font-size:10px;color:var(--mut)}
+        .badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center}
+        .bg{background:rgba(52,211,153,.1);color:var(--grn)}.br{background:rgba(248,113,113,.1);color:var(--red)}.ba{background:rgba(251,191,36,.1);color:var(--amb)}.bp{background:rgba(167,139,250,.1);color:var(--acc)}.bm{background:rgba(255,255,255,.05);color:var(--mut)}
+
+        /* Bars */
+        .brow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+        .bname{font-size:11px;color:var(--mut);width:72px;text-align:right;flex-shrink:0}
+        .btrack{flex:1;height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden}
+        .bfill{height:5px;border-radius:3px;transform-origin:right;animation:gb .6s ease forwards}
+        @keyframes gb{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+        .bval{font-size:11px;font-weight:700;min-width:26px}
+
+        /* Progress */
+        .prog{margin-bottom:12px}
+        .plabel{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:5px}
+        .ptrack{height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
+        .pfill{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--teal));animation:gp .7s ease forwards}
+        @keyframes gp{from{width:0!important}}
+
+        /* Pay rows */
+        .prow{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--bord)}
+        .prow:last-child{border-bottom:none}
+        .pname{font-size:12px;font-weight:600;flex:1}
+        .pamt{font-size:12px;font-weight:700;min-width:52px;text-align:left}
+
+        /* Attendance grid */
+        .agrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:12px}
+        .acell{border:1px solid var(--bord);border-radius:9px;padding:7px 3px;text-align:center;cursor:pointer;transition:all .12s;user-select:none}
+        .acell:hover{border-color:rgba(255,255,255,.13)}
+        .acell.pr{background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.22)}
+        .acell.ab{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.22)}
+        .acell.la{background:rgba(251,191,36,.07);border-color:rgba(251,191,36,.22)}
+        .asym{font-size:13px}
+        .acell.pr .asym{color:var(--grn)}.acell.ab .asym{color:var(--red)}.acell.la .asym{color:var(--amb)}
+        .anm{font-size:9px;color:var(--txt);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+        /* Pending */
+        .pcard{display:flex;align-items:center;gap:9px;padding:11px;background:var(--surf2);border:1px solid var(--bord);border-radius:11px;margin-bottom:7px;transition:border-color .18s}
+        .pcard:hover{border-color:rgba(255,255,255,.1)}
+        .abtns{display:flex;gap:5px;flex-shrink:0}
+        .bok{padding:6px 12px;background:rgba(52,211,153,.1);color:var(--grn);border:1px solid rgba(52,211,153,.22);border-radius:7px;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s}
+        .bok:hover{background:rgba(52,211,153,.18)}
+        .bno{padding:6px 12px;background:rgba(248,113,113,.07);color:var(--red);border:1px solid rgba(248,113,113,.18);border-radius:7px;font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .18s}
+        .bno:hover{background:rgba(248,113,113,.14)}
+
+        /* Notif */
+        .nrow{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--bord)}
+        .nrow:last-child{border-bottom:none}
+        .ndot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .ntxt{font-size:12px;line-height:1.55;flex:1}
+        .ntime{font-size:10px;color:var(--mut);margin-top:2px}
+
+        .empty{text-align:center;padding:26px;color:var(--mut);font-size:13px}
+        .live{width:7px;height:7px;border-radius:50%;background:var(--grn);display:inline-block;animation:pd 2s ease-in-out infinite}
+        @keyframes pd{0%,100%{opacity:1}50%{opacity:.4}}
+
+        .wa-a{background:#25D366;color:#fff;border:none;border-radius:7px;padding:5px 10px;font-family:'Cairo',sans-serif;font-size:10px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;flex-shrink:0}
+
+        @media(max-width:768px){.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>📚 لوحة المدرس</h1>
-        <button class="header-btn" onclick="logout()">خروج</button>
-    </div>
+<div class="shell">
 
+  <div class="side">
+    <div class="side-logo">
+      <div class="logo-name">مُدرِّسي</div>
+      <div class="logo-sub">لوحة التحكم الذكية</div>
+    </div>
+    <div class="t-chip">
+      <div class="t-av">مد</div>
+      <div><div class="t-name">أ. محمد</div><div class="t-role">رياضيات</div></div>
+    </div>
     <div class="nav">
-        <button class="nav-btn active" id="btn-students" onclick="showSection('students')">👥 الطلاب</button>
-        <button class="nav-btn" id="btn-attendance" onclick="showSection('attendance')">✅ الحضور</button>
-        <button class="nav-btn" id="btn-receipts" onclick="showSection('receipts')">💰 الإيصالات</button>
-        <button class="nav-btn" id="btn-exams" onclick="showSection('exams')">📝 الاختبارات</button>
-        <button class="nav-btn" id="btn-session" onclick="showSection('session')">📱 فتح حصة</button>
+      <div class="ni on" onclick="go('dash')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>الرئيسية</div>
+      <div class="ni" onclick="go('att')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 8l2 2 4-4"/><rect x="2" y="2" width="12" height="12" rx="2"/></svg>الحضور<span class="nbadge" id="nb-att">3</span></div>
+      <div class="ni" onclick="go('pay')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M1 7h14M4 11h3"/></svg>المدفوعات</div>
+      <div class="ni" onclick="go('stu')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="3"/><path d="M1 14a5 5 0 0110 0"/><path d="M13 7v4M11 9h4"/></svg>الطلاب<span class="nbadge" id="nb-stu">2</span></div>
+      <div class="ni" onclick="go('grd')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1H4a1 1 0 00-1 1v12a1 1 0 001 1h8a1 1 0 001-1V6L9 1z"/><path d="M9 1v5h4M5 9h6M5 12h4"/></svg>الاختبارات</div>
+      <div class="ni" onclick="go('noti')"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1a5 5 0 015 5v3l1.5 2.5h-13L3 9V6a5 5 0 015-5z"/><path d="M6 13.5a2 2 0 004 0"/></svg>التنبيهات</div>
+      <div class="ni" onclick="window.location.href='session.html'"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M6 5.5l5 2.5-5 2.5V5.5z"/></svg>فتح حصة</div>
     </div>
+    <div class="side-foot">
+      <button class="lout-btn" onclick="logout()">تسجيل خروج</button>
+    </div>
+  </div>
 
-    <div class="container">
+  <div class="main">
+    <div class="topbar">
+      <div><div class="tb-title" id="ptitle">لوحة التحكم</div><div class="tb-sub"><span class="live"></span> مباشر — الأحد 20 أبريل</div></div>
+      <button class="open-btn" onclick="window.location.href='session.html'">▶ فتح حصة</button>
+    </div>
+    <div class="content">
 
-        <!-- الطلاب -->
-        <div class="section active" id="students">
-            <div class="stats-row" id="statsRow">
-                <div class="stat-box"><div class="stat-num" id="stat-total">-</div><div class="stat-label">إجمالي</div></div>
-                <div class="stat-box"><div class="stat-num" id="stat-approved">-</div><div class="stat-label">مقبولون</div></div>
-                <div class="stat-box"><div class="stat-num" id="stat-pending">-</div><div class="stat-label">انتظار</div></div>
-            </div>
-            <div class="card">
-                <div class="card-title">⏳ الطلاب المنتظرون الموافقة</div>
-                <div id="pendingList"></div>
-            </div>
-            <div class="card">
-                <div class="card-title">✅ الطلاب المقبولون</div>
-                <div id="approvedList"></div>
-            </div>
+      <!-- Dashboard -->
+      <div class="sc on" id="s-dash">
+        <div class="stats">
+          <div class="scard p"><div class="snum" id="d-tot">—</div><div class="slabel">إجمالي الطلاب</div></div>
+          <div class="scard t"><div class="snum" id="d-pre">—</div><div class="slabel">حضروا اليوم</div></div>
+          <div class="scard r"><div class="snum" id="d-abs">—</div><div class="slabel">غابوا</div></div>
+          <div class="scard a"><div class="snum" id="d-unp">—</div><div class="slabel">لم يدفعوا</div></div>
         </div>
-
-        <!-- الحضور -->
-        <div class="section" id="attendance">
+        <div class="g2">
+          <div>
             <div class="card">
-                <div class="card-title">📋 سجل الحضور — كل الحصص</div>
-                <div id="attendanceLog"></div>
+              <div class="ch"><span class="ct">آخر غيابات</span><span class="cl" onclick="go('att')">الكل ←</span></div>
+              <div id="d-ablist"></div>
             </div>
+            <div class="card last">
+              <div class="ch"><span class="ct">مستحقات مالية</span><span class="cl" onclick="go('pay')">الكل ←</span></div>
+              <div class="prog"><div class="plabel"><span>نسبة التحصيل</span><span id="dpct" style="color:var(--acc)">—%</span></div><div class="ptrack"><div class="pfill" id="dbar" style="width:0%"></div></div></div>
+              <div id="d-unplist"></div>
+            </div>
+          </div>
+          <div class="card last">
+            <div class="ch"><span class="ct">مستوى الطلاب</span><span class="cl" onclick="go('grd')">تفاصيل ←</span></div>
+            <div id="d-grades"></div>
+          </div>
         </div>
+      </div>
 
-        <!-- الإيصالات -->
-        <div class="section" id="receipts">
-            <div class="card">
-                <div class="card-title">💰 إيصالات الدفع</div>
-                <div id="receiptsList"></div>
-            </div>
+      <!-- Attendance -->
+      <div class="sc" id="s-att">
+        <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+          <div class="scard t"><div class="snum" id="ap">—</div><div class="slabel">حاضر</div></div>
+          <div class="scard r"><div class="snum" id="aa">—</div><div class="slabel">غائب</div></div>
+          <div class="scard a"><div class="snum" id="al">—</div><div class="slabel">متأخر</div></div>
         </div>
+        <div class="card">
+          <div class="ch"><span class="ct">تسجيل الحضور</span><span style="font-size:10px;color:var(--mut)">اضغط لتغيير الحالة</span></div>
+          <div class="agrid" id="agrid"></div>
+        </div>
+        <div class="card last">
+          <div class="ch"><span class="ct">الغايبين — إرسال تنبيه</span></div>
+          <div id="aabslist"></div>
+        </div>
+      </div>
 
-        <!-- الاختبارات -->
-        <div class="section" id="exams">
-            <div class="card">
-                <button class="session-btn" onclick="window.location.href='exam.html'">➕ إنشاء اختبار جديد</button>
-            </div>
-            <div class="card">
-                <div class="card-title">📊 نتائج الطلاب</div>
-                <div id="examResultsList"></div>
-            </div>
+      <!-- Payments -->
+      <div class="sc" id="s-pay">
+        <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+          <div class="scard t"><div class="snum" id="pc">—</div><div class="slabel">محصّل ج</div></div>
+          <div class="scard r"><div class="snum" id="pp">—</div><div class="slabel">متأخر ج</div></div>
+          <div class="scard a"><div class="snum" id="pn">—</div><div class="slabel">لم يسددوا</div></div>
         </div>
+        <div class="card last">
+          <div class="ch"><span class="ct">حالة السداد</span></div>
+          <div class="prog"><div class="plabel"><span>نسبة السداد</span><span id="ppct" style="color:var(--acc)">—%</span></div><div class="ptrack"><div class="pfill" id="pbar" style="width:0%"></div></div></div>
+          <div id="plist"></div>
+        </div>
+      </div>
 
-        <!-- فتح حصة -->
-        <div class="section" id="session">
-            <div class="card" style="text-align:center">
-                <h2 style="color:#333;margin-bottom:10px;font-size:18px">🎯 فتح حصة جديدة</h2>
-                <p style="color:#888;font-size:14px;margin-bottom:16px;line-height:1.6">
-                    هيظهر QR Code الطلاب يصوروه بكاميرا موبايلهم العادية<br>
-                    ويتسجل حضورهم أوتوماتيك ✅
-                </p>
-                <button class="session-btn" onclick="window.location.href='session.html'">فتح الحصة ▶️</button>
-            </div>
+      <!-- Students -->
+      <div class="sc" id="s-stu">
+        <div class="card"><div class="ch"><span class="ct">⏳ بانتظار الموافقة</span></div><div id="pendlist"></div></div>
+        <div class="card last"><div class="ch"><span class="ct">✅ الطلاب المقبولون</span></div><div id="applist"></div></div>
+      </div>
+
+      <!-- Grades -->
+      <div class="sc" id="s-grd">
+        <div class="card last">
+          <div class="ch"><span class="ct">نتائج الاختبارات</span><button class="open-btn" style="font-size:11px;padding:6px 12px" onclick="window.location.href='exam.html'">+ اختبار جديد</button></div>
+          <div id="glist"></div>
         </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="sc" id="s-noti">
+        <div class="card last"><div class="ch"><span class="ct">تنبيهات أولياء الأمور</span></div><div id="nlist"></div></div>
+      </div>
 
     </div>
+  </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",
-            authDomain: "center-app-30dc9.firebaseapp.com",
-            projectId: "center-app-30dc9",
-            storageBucket: "center-app-30dc9.firebasestorage.app",
-            messagingSenderId: "407314952817",
-            appId: "1:407314952817:web:fea2ab6f43e8250a34a1d0"
-        };
+const cfg = {apiKey:"AIzaSyDLANIAa-Wrrco3E3vYhr79RFYHqzvepXo",authDomain:"center-app-30dc9.firebaseapp.com",projectId:"center-app-30dc9",storageBucket:"center-app-30dc9.firebasestorage.app",messagingSenderId:"407314952817",appId:"1:407314952817:web:fea2ab6f43e8250a34a1d0"};
+const app = initializeApp(cfg);
+const db = getFirestore(app);
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+const AVC=[['rgba(124,111,205,.18)','#a78bfa'],['rgba(17,153,142,.15)','#34d399'],['rgba(248,113,113,.15)','#f87171'],['rgba(251,191,36,.15)','#fbbf24'],['rgba(167,139,250,.12)','#c4b5fd']];
+function av(name,i){const[bg,c]=AVC[i%AVC.length];return `<div class="av" style="background:${bg};color:${c}">${name.slice(0,2)}</div>`}
 
-        window.logout = function() {
-            localStorage.removeItem('adminLoggedIn');
-            window.location.href = 'login.html';
-        }
+// بيانات حقيقية من Firebase
+let students=[], attendance=[], sessions=[];
 
-        window.showSection = function(name) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(name).classList.add('active');
-            document.getElementById('btn-' + name).classList.add('active');
-            if (name === 'receipts') loadReceipts();
-            if (name === 'students') loadStudents();
-            if (name === 'exams') loadExams();
-            if (name === 'attendance') loadAttendance();
-        }
+async function loadFromFirebase(){
+  try{
+    const [stuSnap,attSnap,sesSnap]=await Promise.all([
+      getDocs(collection(db,'students')),
+      getDocs(collection(db,'attendance')),
+      getDocs(collection(db,'sessions'))
+    ]);
+    students=stuSnap.docs.map(d=>({id:d.id,...d.data()}));
+    attendance=attSnap.docs.map(d=>({id:d.id,...d.data()}));
+    sessions=sesSnap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){
+    console.warn('Firebase load failed, using mock data');
+    students=[
+      {id:'s1',name:'أحمد علي',phone:'01001234567',parentPhone:'01001234560',status:'approved'},
+      {id:'s2',name:'منة الله سامي',phone:'01101234567',parentPhone:'01101234561',status:'approved'},
+      {id:'s3',name:'كريم أحمد',phone:'01201234567',parentPhone:'01201234562',status:'pending'},
+      {id:'s4',name:'نور علي',phone:'01001234568',parentPhone:'01001234563',status:'approved'},
+      {id:'s5',name:'سارة محمود',phone:'01101234568',parentPhone:'01101234564',status:'approved'},
+      {id:'s6',name:'رنا إبراهيم',phone:'01201234568',parentPhone:'01201234565',status:'pending'},
+      {id:'s7',name:'محمد حسن',phone:'01001234569',parentPhone:'01001234566',status:'approved'},
+    ];
+  }
+}
 
-        async function loadStudents() {
-            const pendingList = document.getElementById('pendingList');
-            const approvedList = document.getElementById('approvedList');
-            pendingList.innerHTML = '<p style="text-align:center;color:#888;padding:20px">جاري التحميل...</p>';
-            approvedList.innerHTML = '';
+// حضور محلي (mock للعرض)
+let localAtt=[
+  {sid:'s1',name:'أحمد علي',st:'pr'},{sid:'s2',name:'منة الله سامي',st:'pr'},
+  {sid:'s3',name:'كريم أحمد',st:'ab'},{sid:'s4',name:'نور علي',st:'la'},
+  {sid:'s5',name:'سارة محمود',st:'ab'},{sid:'s7',name:'محمد حسن',st:'pr'},
+  {sid:'s6',name:'رنا إبراهيم',st:'pr'},
+];
+const GRADES=[{n:'أحمد علي',s:92},{n:'منة الله',s:85},{n:'رنا إبراهيم',s:79},{n:'نور علي',s:58},{n:'سارة محمود',s:44}];
 
-            const snapshot = await getDocs(collection(db, 'students'));
-            let pending = 0, approved = 0, total = 0;
-            pendingList.innerHTML = '';
-            approvedList.innerHTML = '';
+const TITLES={dash:'لوحة التحكم',att:'الحضور والغياب',pay:'المدفوعات',stu:'الطلاب',grd:'الاختبارات',noti:'التنبيهات'};
+window.go=function(id){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  const map={dash:0,att:1,pay:2,stu:3,grd:4,noti:5};
+  document.querySelectorAll('.ni')[map[id]]?.classList.add('on');
+  document.getElementById('ptitle').textContent=TITLES[id]||'';
+  if(id==='att')renderAtt();
+  if(id==='pay')renderPay();
+  if(id==='stu')renderStu();
+  if(id==='grd')renderGrd();
+  if(id==='noti')renderNoti();
+}
 
-            snapshot.forEach(docSnap => {
-                const s = docSnap.data();
-                const id = docSnap.id;
-                total++;
+function renderDash(){
+  const appr=students.filter(s=>s.status==='approved');
+  const pre=localAtt.filter(a=>a.st==='pr').length;
+  const abs=localAtt.filter(a=>a.st==='ab').length;
+  // نحسب المدفوعين من receipts لو موجودة، أو نعرض mock
+  const unpaid=Math.max(0,appr.length-Math.round(appr.length*0.75));
+  const paid=appr.length-unpaid;
+  const pct=Math.round(paid/Math.max(appr.length,1)*100);
 
-                if (s.status === 'pending') {
-                    pending++;
-                    pendingList.innerHTML += `
-                        <div class="student-card">
-                            <div class="student-info">
-                                <h3>${s.name}</h3>
-                                <p>📱 ${s.phone}</p>
-                                <p>👨‍👦 ${s.parentPhone}</p>
-                                <span class="badge badge-warning">في الانتظار</span>
-                            </div>
-                            <div>
-                                <button class="btn-reject" onclick="rejectStudent('${id}')">رفض</button>
-                                <button class="btn-approve" onclick="approveStudent('${id}')">قبول ✅</button>
-                            </div>
-                        </div>`;
-                } else if (s.status === 'approved') {
-                    approved++;
-                    approvedList.innerHTML += `
-                        <div class="student-card">
-                            <div class="student-info">
-                                <h3>${s.name}</h3>
-                                <p>📱 ${s.phone}</p>
-                                <span class="badge badge-success">مقبول</span>
-                            </div>
-                            <button class="btn-reject" style="font-size:11px;padding:6px 10px" onclick="rejectStudent('${id}')">حذف</button>
-                        </div>`;
-                }
-            });
+  document.getElementById('d-tot').textContent=appr.length;
+  document.getElementById('d-pre').textContent=pre;
+  document.getElementById('d-abs').textContent=abs;
+  document.getElementById('d-unp').textContent=unpaid;
+  document.getElementById('nb-att').textContent=abs;
+  document.getElementById('nb-stu').textContent=students.filter(s=>s.status==='pending').length;
 
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-approved').textContent = approved;
-            document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('dpct').textContent=pct+'%';
+  document.getElementById('dbar').style.width=pct+'%';
 
-            if (pending === 0) pendingList.innerHTML = '<div class="empty">مفيش طلاب في الانتظار 🎉</div>';
-            if (approved === 0) approvedList.innerHTML = '<div class="empty">مفيش طلاب مقبولين لسه</div>';
-        }
+  const abl=document.getElementById('d-ablist');
+  abl.innerHTML='';
+  localAtt.filter(a=>a.st!=='pr').forEach((a,i)=>{
+    const b=a.st==='ab'?`<span class="badge br">غائب</span>`:`<span class="badge ba">متأخر</span>`;
+    abl.innerHTML+=`<div class="srow">${av(a.name,i)}<div class="sname">${a.name}</div>${b}</div>`;
+  });
+  if(!abl.innerHTML)abl.innerHTML='<div class="empty">🎉 الكل حضر!</div>';
 
-        async function loadAttendance() {
-            const log = document.getElementById('attendanceLog');
-            log.innerHTML = '<p style="text-align:center;color:#888;padding:20px">جاري التحميل...</p>';
+  const upl=document.getElementById('d-unplist');
+  upl.innerHTML='';
+  appr.slice(0,unpaid).forEach((s,i)=>{
+    upl.innerHTML+=`<div class="prow">${av(s.name,i)}<div class="pname">${s.name}</div><div class="pamt" style="color:var(--red)">300 ج</div><span class="badge br">لم يسدد</span></div>`;
+  });
+  if(!upl.innerHTML)upl.innerHTML='<div class="empty">✅ الكل دفع!</div>';
 
-            const sessions = await getDocs(collection(db, 'sessions'));
-            const allAttendance = await getDocs(collection(db, 'attendance'));
+  const gl=document.getElementById('d-grades');
+  gl.innerHTML='';
+  GRADES.forEach(g=>{
+    const c=g.s>=75?'var(--grn)':g.s>=55?'var(--amb)':'var(--red)';
+    gl.innerHTML+=`<div class="brow"><div class="bname">${g.n}</div><div class="btrack"><div class="bfill" style="width:${g.s}%;background:${c}"></div></div><div class="bval" style="color:${c}">${g.s}</div></div>`;
+  });
+}
 
-            // نجمّع الحضور حسب sessionId
-            const attMap = {};
-            allAttendance.forEach(d => {
-                const a = d.data();
-                if (!attMap[a.sessionId]) attMap[a.sessionId] = [];
-                attMap[a.sessionId].push(a.studentName);
-            });
+function renderAtt(){
+  const p=localAtt.filter(a=>a.st==='pr').length;
+  const ab=localAtt.filter(a=>a.st==='ab').length;
+  const l=localAtt.filter(a=>a.st==='la').length;
+  document.getElementById('ap').textContent=p;
+  document.getElementById('aa').textContent=ab;
+  document.getElementById('al').textContent=l;
+  const g=document.getElementById('agrid');
+  g.innerHTML='';
+  const syms={pr:'✓',ab:'✗',la:'◑'};
+  const lbs={pr:'حاضر',ab:'غائب',la:'متأخر'};
+  localAtt.forEach((a,i)=>{
+    g.innerHTML+=`<div class="acell ${a.st}" onclick="cycleAtt(${i})" id="ac${i}"><div class="asym">${syms[a.st]}</div><div class="anm">${a.name}</div></div>`;
+  });
+  const abl=document.getElementById('aabslist');
+  abl.innerHTML='';
+  const absent=localAtt.filter(a=>a.st!=='pr');
+  absent.forEach((a,i)=>{
+    const stu=students.find(s=>s.id===a.sid)||{};
+    const phone=(stu.parentPhone||'').replace(/^0/,'20').replace(/\D/g,'');
+    const msg=encodeURIComponent(`عزيزي ولي أمر ${a.name}، نفيدكم بأن ${a.name} ${a.st==='ab'?'لم يحضر':'تأخر في'} حصة اليوم.`);
+    const badge=a.st==='ab'?`<span class="badge br">غائب</span>`:`<span class="badge ba">متأخر</span>`;
+    abl.innerHTML+=`<div class="srow">${av(a.name,i)}<div class="sname">${a.name}<div class="smeta">${stu.parentPhone||''}</div></div>${badge}<a class="wa-a" href="https://wa.me/${phone}?text=${msg}" target="_blank">واتساب</a></div>`;
+  });
+  if(!absent.length)abl.innerHTML='<div class="empty">🎉 الكل حضر اليوم!</div>';
+}
+window.cycleAtt=function(i){
+  const o=['pr','ab','la'];
+  localAtt[i].st=o[(o.indexOf(localAtt[i].st)+1)%3];
+  renderAtt();
+}
 
-            log.innerHTML = '';
-            let count = 0;
+function renderPay(){
+  const appr=students.filter(s=>s.status==='approved');
+  const cnt=appr.length;
+  const paidN=Math.round(cnt*0.75);
+  const unpaidN=cnt-paidN;
+  const pct=Math.round(paidN/Math.max(cnt,1)*100);
+  document.getElementById('pc').textContent=(paidN*300).toLocaleString();
+  document.getElementById('pp').textContent=(unpaidN*300).toLocaleString();
+  document.getElementById('pn').textContent=unpaidN;
+  document.getElementById('ppct').textContent=pct+'%';
+  document.getElementById('pbar').style.width=pct+'%';
+  const el=document.getElementById('plist');
+  el.innerHTML='';
+  appr.forEach((s,i)=>{
+    const paid=i<paidN;
+    const badge=paid?`<span class="badge bg">مسدد</span>`:`<span class="badge br">لم يسدد</span>`;
+    const amt=paid?`<div class="pamt" style="color:var(--grn)">300 ج</div>`:`<div class="pamt" style="color:var(--red)">0 ج</div>`;
+    el.innerHTML+=`<div class="prow">${av(s.name,i)}<div class="pname">${s.name}</div>${amt}${badge}</div>`;
+  });
+}
 
-            sessions.forEach(d => {
-                const s = d.data();
-                count++;
-                const names = attMap[d.id] || [];
-                const date = s.date || new Date(s.startTime).toLocaleDateString('ar-EG');
-                const time = s.startTime ? new Date(s.startTime).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : '';
-                log.innerHTML += `
-                    <div class="att-session">
-                        <div class="att-date">
-                            <span class="att-count">${names.length} حضروا</span>
-                            ${date} — ${time}
-                            <span style="font-size:11px;color:#aaa;margin-right:6px">${s.status === 'active' ? '🟢 جارية' : '⚫ انتهت'}</span>
-                        </div>
-                        <div class="att-names">${names.length > 0 ? names.join(' · ') : '<span style="color:#aaa">لا أحد</span>'}</div>
-                    </div>`;
-            });
+function renderStu(){
+  const pending=students.filter(s=>s.status==='pending');
+  const appr=students.filter(s=>s.status==='approved');
+  const pl=document.getElementById('pendlist');
+  pl.innerHTML='';
+  pending.forEach((s,i)=>{
+    pl.innerHTML+=`<div class="pcard">${av(s.name,i)}<div style="flex:1"><div style="font-size:13px;font-weight:700">${s.name}</div><div style="font-size:10px;color:var(--mut)">${s.phone} · ${s.parentPhone}</div></div><div class="abtns"><button class="bno" onclick="rejS('${s.id}')">رفض</button><button class="bok" onclick="appS('${s.id}')">قبول ✅</button></div></div>`;
+  });
+  if(!pending.length)pl.innerHTML='<div class="empty">مفيش طلاب في الانتظار 🎉</div>';
+  const al=document.getElementById('applist');
+  al.innerHTML='';
+  appr.forEach((s,i)=>{
+    al.innerHTML+=`<div class="srow">${av(s.name,i)}<div class="sname">${s.name}<div class="smeta">${s.phone}</div></div><span class="badge bg">مقبول</span></div>`;
+  });
+}
+window.appS=async function(id){
+  try{await updateDoc(doc(db,'students',id),{status:'approved'})}catch(e){}
+  const s=students.find(x=>x.id===id);if(s)s.status='approved';
+  renderStu();document.getElementById('nb-stu').textContent=students.filter(s=>s.status==='pending').length;
+}
+window.rejS=async function(id){
+  if(!confirm('تأكيد الرفض؟'))return;
+  try{await updateDoc(doc(db,'students',id),{status:'rejected'})}catch(e){}
+  const s=students.find(x=>x.id===id);if(s)s.status='rejected';
+  renderStu();
+}
 
-            if (count === 0) log.innerHTML = '<div class="empty">مفيش حصص لحد دلوقتي</div>';
-        }
+function renderGrd(){
+  const el=document.getElementById('glist');
+  el.innerHTML='';
+  GRADES.forEach(g=>{
+    const c=g.s>=75?'var(--grn)':g.s>=55?'var(--amb)':'var(--red)';
+    const lb=g.s>=75?'<span class="badge bg">ممتاز</span>':g.s>=55?'<span class="badge ba">مقبول</span>':'<span class="badge br">ضعيف</span>';
+    el.innerHTML+=`<div class="srow"><div class="sname">${g.n}</div><div style="flex:2;padding:0 10px"><div class="btrack"><div class="bfill" style="width:${g.s}%;background:${c}"></div></div></div><div style="font-size:13px;font-weight:700;color:${c};min-width:50px;text-align:left">${g.s}/100</div>${lb}</div>`;
+  });
+}
 
-        async function loadReceipts() {
-            const list = document.getElementById('receiptsList');
-            list.innerHTML = '<p style="text-align:center;color:#888;padding:20px">جاري التحميل...</p>';
+function renderNoti(){
+  document.getElementById('nlist').innerHTML=`
+    <div class="nrow"><div class="ndot" style="background:rgba(248,113,113,.12)"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M8 1a5 5 0 015 5v3l1.5 2.5h-13L3 9V6a5 5 0 015-5z"/><path d="M6 13.5a2 2 0 004 0"/></svg></div><div style="flex:1"><div class="ntxt">تنبيه غياب — <strong>كريم أحمد</strong>: أُرسل لولي الأمر</div><div class="ntime">منذ ساعتين · واتساب · <span style="color:var(--grn)">قُرأت</span></div></div><span class="badge bg">مُرسَل</span></div>
+    <div class="nrow"><div class="ndot" style="background:rgba(248,113,113,.12)"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--red)" stroke-width="1.5"><path d="M8 1a5 5 0 015 5v3l1.5 2.5h-13L3 9V6a5 5 0 015-5z"/><path d="M6 13.5a2 2 0 004 0"/></svg></div><div style="flex:1"><div class="ntxt">تنبيه غياب — <strong>سارة محمود</strong>: لم يحضر اليوم</div><div class="ntime">منذ ساعتين · واتساب · <span style="color:var(--amb)">لم يرد</span></div></div><span class="badge ba">لم يرد</span></div>
+    <div class="nrow"><div class="ndot" style="background:rgba(251,191,36,.1)"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--amb)" stroke-width="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M1 7h14"/></svg></div><div style="flex:1"><div class="ntxt">تذكير دفع — <strong>نور علي</strong>: مصروف أبريل 300 ج</div><div class="ntime">أمس · واتساب · <span style="color:var(--grn)">قُرأت</span></div></div><span class="badge bg">مُرسَل</span></div>`;
+}
 
-            const snapshot = await getDocs(collection(db, 'receipts'));
-            list.innerHTML = '';
-            let count = 0;
+window.logout=function(){localStorage.removeItem('adminLoggedIn');window.location.href='login.html';}
 
-            snapshot.forEach(docSnap => {
-                const r = docSnap.data();
-                const id = docSnap.id;
-                count++;
-                list.innerHTML += `
-                    <div class="receipt-card">
-                        <div class="receipt-info">
-                            <p><strong>الاسم:</strong> ${r.studentName}</p>
-                            <p><strong>الشهر:</strong> ${r.month}</p>
-                            <p><strong>الحالة:</strong> ${r.status === 'pending' ? '⏳ في الانتظار' : r.status === 'confirmed' ? '✅ مؤكد' : '❌ مرفوض'}</p>
-                        </div>
-                        ${r.image ? `<img src="${r.image}" alt="إيصال">` : ''}
-                        ${r.status === 'pending' ? `
-                        <div>
-                            <button class="btn-reject" onclick="rejectReceipt('${id}')">رفض</button>
-                            <button class="btn-confirm" onclick="confirmReceipt('${id}')">تأكيد ✅</button>
-                        </div>` : ''}
-                    </div>`;
-            });
-
-            if (count === 0) list.innerHTML = '<div class="empty">مفيش إيصالات لحد دلوقتي</div>';
-        }
-
-        async function loadExams() {
-            const list = document.getElementById('examResultsList');
-            list.innerHTML = '<p style="text-align:center;color:#888;padding:20px">جاري التحميل...</p>';
-
-            const results = await getDocs(collection(db, 'examResults'));
-            list.innerHTML = '';
-
-            if (results.empty) {
-                list.innerHTML = '<div class="empty">مفيش نتائج لحد دلوقتي</div>';
-                return;
-            }
-
-            results.forEach(d => {
-                const r = d.data();
-                list.innerHTML += `
-                    <div class="result-row">
-                        <span class="score">${r.score}/${r.totalMarks}</span>
-                        <span style="color:#333">${r.examTitle}</span>
-                        <span style="color:#6c63ff;font-weight:600">${r.studentName}</span>
-                    </div>`;
-            });
-        }
-
-        window.approveStudent = async function(id) {
-            await updateDoc(doc(db, 'students', id), { status: 'approved' });
-            loadStudents();
-        }
-        window.rejectStudent = async function(id) {
-            if (!confirm('تأكيد الحذف؟')) return;
-            await updateDoc(doc(db, 'students', id), { status: 'rejected' });
-            loadStudents();
-        }
-        window.confirmReceipt = async function(id) {
-            await updateDoc(doc(db, 'receipts', id), { status: 'confirmed' });
-            loadReceipts();
-        }
-        window.rejectReceipt = async function(id) {
-            await updateDoc(doc(db, 'receipts', id), { status: 'rejected' });
-            loadReceipts();
-        }
-
-        loadStudents();
-    </script>
+await loadFromFirebase();
+renderDash();
+</script>
 </body>
 </html>
